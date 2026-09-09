@@ -1,0 +1,194 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useCartStore } from '../store/cartStore';
+import { ScrollReveal } from '../components/motion/ScrollReveal';
+
+export function CheckoutPage() {
+  const { items, clearCart } = useCartStore();
+  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const [shipping, setShipping] = useState(5.99);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+    clearCart();
+  };
+
+  const inputStyle = {
+    background: 'rgba(255, 255, 255, 0.04)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+  };
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen pt-28 pb-20 flex items-center justify-center">
+        <ScrollReveal>
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-[#4A7C59]/20 flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">✓</span>
+            </div>
+            <h1 className="text-2xl font-bold text-[#F5F0EB] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+              Order Placed!
+            </h1>
+            <p className="text-[#A8A29E] mb-6">Thank you for your purchase.</p>
+            <Link
+              to="/shop"
+              className="inline-flex px-6 py-3 rounded-xl text-sm font-semibold"
+              style={{ background: '#F5F0EB', color: '#0A0A0A' }}
+            >
+              Continue Shopping
+            </Link>
+          </div>
+        </ScrollReveal>
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="min-h-screen pt-28 pb-20 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-[#A8A29E] mb-4">Your cart is empty</p>
+          <Link to="/shop" className="text-sm text-[#4A7C59] hover:underline">Browse products</Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen pt-28 pb-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ScrollReveal>
+          <h1 className="text-3xl font-bold text-[#F5F0EB] mb-10" style={{ fontFamily: 'var(--font-heading)' }}>
+            Checkout
+          </h1>
+        </ScrollReveal>
+
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            {/* Form */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Contact */}
+              <ScrollReveal>
+                <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <h2 className="text-base font-semibold text-[#F5F0EB] mb-4">Contact Information</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input required placeholder="Email" type="email" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                    <input placeholder="Phone" type="tel" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              {/* Shipping */}
+              <ScrollReveal delay={0.05}>
+                <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <h2 className="text-base font-semibold text-[#F5F0EB] mb-4">Shipping Address</h2>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input required placeholder="First name" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                      <input required placeholder="Last name" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                    </div>
+                    <input required placeholder="Address" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      <input required placeholder="City" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                      <input required placeholder="State" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                      <input required placeholder="ZIP" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59] col-span-2 sm:col-span-1" style={inputStyle} />
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              {/* Delivery */}
+              <ScrollReveal delay={0.1}>
+                <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <h2 className="text-base font-semibold text-[#F5F0EB] mb-4">Delivery</h2>
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Standard (5–7 days)', price: 5.99 },
+                      { label: 'Express (2–3 days)', price: 12.99 },
+                    ].map((opt) => (
+                      <label
+                        key={opt.price}
+                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer transition-colors ${
+                          shipping === opt.price ? 'bg-white/[0.06] border border-[#4A7C59]/40' : 'border border-white/[0.06] hover:bg-white/[0.02]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="shipping"
+                            checked={shipping === opt.price}
+                            onChange={() => setShipping(opt.price)}
+                            className="accent-[#4A7C59]"
+                          />
+                          <span className="text-sm text-[#F5F0EB]">{opt.label}</span>
+                        </div>
+                        <span className="text-sm text-[#A8A29E]">${opt.price.toFixed(2)}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              {/* Payment */}
+              <ScrollReveal delay={0.15}>
+                <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <h2 className="text-base font-semibold text-[#F5F0EB] mb-4">Payment</h2>
+                  <div className="space-y-4">
+                    <input required placeholder="Card number" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                    <div className="grid grid-cols-2 gap-4">
+                      <input required placeholder="MM / YY" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                      <input required placeholder="CVV" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+
+            {/* Order Summary */}
+            <ScrollReveal delay={0.1} className="lg:col-span-2">
+              <div
+                className="rounded-2xl p-6 h-fit lg:sticky lg:top-28"
+                style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.08)' }}
+              >
+                <h2 className="text-base font-semibold text-[#F5F0EB] mb-5">Order Summary</h2>
+                <div className="space-y-3 mb-5">
+                  {items.map((item) => (
+                    <div key={item.product.id} className="flex justify-between text-sm">
+                      <span className="text-[#A8A29E] truncate max-w-[60%]">{item.product.name} × {item.quantity}</span>
+                      <span className="text-[#F5F0EB]">${(item.product.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="h-px bg-white/[0.06] mb-4" />
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#A8A29E]">Subtotal</span>
+                    <span className="text-[#F5F0EB]">${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#A8A29E]">Shipping</span>
+                    <span className="text-[#F5F0EB]">${shipping.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div className="h-px bg-white/[0.06] mb-4" />
+                <div className="flex justify-between mb-6">
+                  <span className="font-medium text-[#F5F0EB]">Total</span>
+                  <span className="text-xl font-bold text-[#F5F0EB]">${(subtotal + shipping).toFixed(2)}</span>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:translate-y-[-1px]"
+                  style={{ background: '#F5F0EB', color: '#0A0A0A' }}
+                >
+                  Place Order
+                </button>
+              </div>
+            </ScrollReveal>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

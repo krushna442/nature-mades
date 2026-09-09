@@ -1,56 +1,78 @@
-import react from 'react';
-import AeroShards from './AeroShards';
-import './App.css'
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Layout } from './components/layout/Layout';
+import { HomePage } from './pages/HomePage';
 
-function App() {
+// Lazy load non-critical pages
+const ShopPage = lazy(() => import('./pages/ShopPage').then(m => ({ default: m.ShopPage })));
+const CraftsPage = lazy(() => import('./pages/CraftsPage').then(m => ({ default: m.CraftsPage })));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const CartPage = lazy(() => import('./pages/CartPage').then(m => ({ default: m.CartPage })));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then(m => ({ default: m.CheckoutPage })));
+const AccountPage = lazy(() => import('./pages/AccountPage').then(m => ({ default: m.AccountPage })));
 
+function PageLoader() {
   return (
-  <div style={{ width: '100%', height: '700px', position: 'relative' }}>
-  <AeroShards
-    backgroundColor="#000000"
-    shardColor="#10B981"
-    accentColor="#3B82F6"
-    placement="full"
-    flow="stream"
-    material="pearl"
-    detail="balanced"
-    effect="none"
-    scale={1}
-    spread={1}
-    depth={1}
-    speed={1}
-    spin={1}
-    interaction="repel"
-    density={1.5}
-    shardSize={1.1}
-    stretch={1}
-    turbulence={1}
-    glow={1}
-    edgeSoftness={2}
-    bloom={0.5}
-    grain={0.05}
-    chromaticAberration={0.0075}
-    transitionDuration={1}
-    interactionRadius={1.5}
-    interactionStrength={0.5}
-    rippleIntensity={1}
-    holdToGather
-    paused={false}
-/>
-<div className='text-white absolute top-0 left-0 w-full min-h-screen'> 
-  <div className='w-[70vw] mx-auto border-[0.01px] border-[#a2a0a046] bg-[#0000004f] backdrop-blur-md mt-14 px-4 flex justify-between items-center  h-12 rounded-2xl '>
-    <p className='text-bold text-2xl' style={{fontFamily:'ui-sans-serif'}}>Nature<span className='text-emerald-700 font-extrabold'>Mades</span></p>
-    <ul className='flex gap-2 '>
-<li>Products</li>
-<li>Products</li>
-<li>Products</li>
-<li>Products</li>
-
-    </ul>
-     </div>
-</div>
-</div>
-  )
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div
+          className="w-8 h-8 rounded-full border-2 border-white/10 border-t-[#4A7C59] animate-spin"
+        />
+        <span className="text-sm text-[#78716C]">Loading...</span>
+      </div>
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <BrowserRouter>
+      <Layout>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/crafts" element={<CraftsPage />} />
+            <Route path="/product/:slug" element={<ProductDetailPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </Layout>
+    </BrowserRouter>
+  );
+}
+
+function NotFound() {
+  return (
+    <div className="min-h-screen flex items-center justify-center pt-28">
+      <div className="text-center">
+        <h1
+          className="text-6xl font-bold text-white/10 mb-4"
+          style={{ fontFamily: 'var(--font-heading)' }}
+        >
+          404
+        </h1>
+        <p className="text-[#A8A29E] mb-6">Page not found</p>
+        <a
+          href="/"
+          className="inline-flex items-center px-5 py-2.5 rounded-xl text-sm font-medium transition-colors"
+          style={{
+            background: '#F5F0EB',
+            color: '#0A0A0A',
+          }}
+        >
+          Go Home
+        </a>
+      </div>
+    </div>
+  );
+}
+
+export default App;

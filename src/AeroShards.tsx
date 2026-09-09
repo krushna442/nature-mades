@@ -1905,7 +1905,7 @@ export default function AeroShards({
             viewport: [aspect, shardWorldSize, renderScale, flowDistance],
             shape: [settings.spread, settings.depth, settings.turbulence, pointerShiftY],
             effects: [settings.spin, settings.edgeSoftness, settings.stretch, settings.exposure],
-            composition: layoutWeights,
+            composition: [layoutWeights[0], layoutWeights[1], layoutWeights[2], layoutWeights[3]],
             transport: [travelPhase, Math.min(1, (1 - Math.max(...layoutWeights)) * 12), 0, 0],
             formation: formation.weights,
             gather: [pointerWorldX, pointerWorldY, holdRef.current.amount, holdRef.current.phase],
