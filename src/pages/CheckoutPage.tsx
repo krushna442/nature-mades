@@ -1,18 +1,66 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
+import { submitOrder, type OrderConfirmation } from '../services/orderService';
 import { ScrollReveal } from '../components/motion/ScrollReveal';
 
 export function CheckoutPage() {
   const { items, clearCart } = useCartStore();
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const [shipping, setShipping] = useState(5.99);
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderResult, setOrderResult] = useState<OrderConfirmation | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Form State
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    cardNumber: '',
+    cardExpiry: '',
+    cardCvv: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    clearCart();
+    if (items.length === 0) return;
+
+    setIsSubmitting(true);
+    try {
+      const res = await submitOrder({
+        customer: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+        },
+        shippingAddress: {
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zip: formData.zip,
+        },
+        deliveryMethod: shipping === 12.99 ? 'Express' : 'Standard',
+        items,
+      });
+
+      setOrderResult(res);
+      clearCart();
+    } catch (err) {
+      console.error('Checkout failed', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const inputStyle = {
@@ -20,21 +68,26 @@ export function CheckoutPage() {
     border: '1px solid rgba(255, 255, 255, 0.1)',
   };
 
-  if (submitted) {
+  if (orderResult) {
     return (
       <div className="min-h-screen pt-28 pb-20 flex items-center justify-center">
         <ScrollReveal>
-          <div className="text-center">
-            <div className="w-16 h-16 rounded-full bg-[#4A7C59]/20 flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">✓</span>
+          <div className="text-center max-w-md mx-auto px-4">
+            <div className="w-16 h-16 rounded-full bg-[#4A7C59]/20 flex items-center justify-center mx-auto mb-4 border border-[#4A7C59]/40">
+              <span className="text-2xl text-[#5C9A6F]">✓</span>
             </div>
             <h1 className="text-2xl font-bold text-[#F5F0EB] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-              Order Placed!
+              Order Confirmed!
             </h1>
-            <p className="text-[#A8A29E] mb-6">Thank you for your purchase.</p>
+            <p className="text-sm text-[#A8A29E] mb-1">
+              Order Reference: <span className="font-mono text-[#F5F0EB] font-medium">{orderResult.order.orderNumber}</span>
+            </p>
+            <p className="text-xs text-[#78716C] mb-6">
+              Total Charged: ${orderResult.order.total.toFixed(2)} • {orderResult.order.itemsCount} items
+            </p>
             <Link
               to="/shop"
-              className="inline-flex px-6 py-3 rounded-xl text-sm font-semibold"
+              className="inline-flex px-6 py-3 rounded-xl text-sm font-semibold transition-transform hover:scale-105"
               style={{ background: '#F5F0EB', color: '#0A0A0A' }}
             >
               Continue Shopping
@@ -74,8 +127,25 @@ export function CheckoutPage() {
                 <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                   <h2 className="text-base font-semibold text-[#F5F0EB] mb-4">Contact Information</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input required placeholder="Email" type="email" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
-                    <input placeholder="Phone" type="tel" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                    <input
+                      required
+                      placeholder="Email"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                      style={inputStyle}
+                    />
+                    <input
+                      placeholder="Phone"
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                      style={inputStyle}
+                    />
                   </div>
                 </div>
               </ScrollReveal>
@@ -86,14 +156,62 @@ export function CheckoutPage() {
                   <h2 className="text-base font-semibold text-[#F5F0EB] mb-4">Shipping Address</h2>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <input required placeholder="First name" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
-                      <input required placeholder="Last name" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                      <input
+                        required
+                        placeholder="First name"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                        style={inputStyle}
+                      />
+                      <input
+                        required
+                        placeholder="Last name"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                        style={inputStyle}
+                      />
                     </div>
-                    <input required placeholder="Address" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                    <input
+                      required
+                      placeholder="Address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                      style={inputStyle}
+                    />
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                      <input required placeholder="City" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
-                      <input required placeholder="State" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
-                      <input required placeholder="ZIP" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59] col-span-2 sm:col-span-1" style={inputStyle} />
+                      <input
+                        required
+                        placeholder="City"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                        style={inputStyle}
+                      />
+                      <input
+                        required
+                        placeholder="State"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                        style={inputStyle}
+                      />
+                      <input
+                        required
+                        placeholder="ZIP"
+                        name="zip"
+                        value={formData.zip}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59] col-span-2 sm:col-span-1"
+                        style={inputStyle}
+                      />
                     </div>
                   </div>
                 </div>
@@ -136,10 +254,34 @@ export function CheckoutPage() {
                 <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                   <h2 className="text-base font-semibold text-[#F5F0EB] mb-4">Payment</h2>
                   <div className="space-y-4">
-                    <input required placeholder="Card number" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                    <input
+                      required
+                      placeholder="Card number"
+                      name="cardNumber"
+                      value={formData.cardNumber}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                      style={inputStyle}
+                    />
                     <div className="grid grid-cols-2 gap-4">
-                      <input required placeholder="MM / YY" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
-                      <input required placeholder="CVV" className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]" style={inputStyle} />
+                      <input
+                        required
+                        placeholder="MM / YY"
+                        name="cardExpiry"
+                        value={formData.cardExpiry}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                        style={inputStyle}
+                      />
+                      <input
+                        required
+                        placeholder="CVV"
+                        name="cardCvv"
+                        value={formData.cardCvv}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                        style={inputStyle}
+                      />
                     </div>
                   </div>
                 </div>
@@ -179,10 +321,18 @@ export function CheckoutPage() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:translate-y-[-1px]"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   style={{ background: '#F5F0EB', color: '#0A0A0A' }}
                 >
-                  Place Order
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      <span>Processing Order...</span>
+                    </>
+                  ) : (
+                    'Place Order'
+                  )}
                 </button>
               </div>
             </ScrollReveal>
