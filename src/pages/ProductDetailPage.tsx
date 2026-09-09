@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { products } from '../data/products';
+import type { Product } from '../types';
+import { fetchProductBySlug } from '../services/productService';
 import { useCartStore } from '../store/cartStore';
 import { ScrollReveal } from '../components/motion/ScrollReveal';
 
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const product = products.find((p) => p.slug === slug);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.openCart);
   const [quantity, setQuantity] = useState(1);
@@ -15,7 +17,27 @@ export function ProductDetailPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (!slug) return;
+    setIsLoading(true);
+    fetchProductBySlug(slug)
+      .then((data) => {
+        setProduct(data);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [slug]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pt-28">
+        <div className="text-center">
+          <div className="inline-block w-8 h-8 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-sm text-[#A8A29E]">Loading handcrafted details...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (

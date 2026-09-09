@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ScrollReveal, StaggerReveal } from '../motion/ScrollReveal';
-import { products } from '../../data/products';
+import type { Product } from '../../types';
+import { fetchBestSellerProducts } from '../../services/productService';
+import { useCartStore } from '../../store/cartStore';
 
 export const BestSellers: React.FC = () => {
-  const bestSellers = products.filter(p => p.bestSeller).slice(0, 4);
+  const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  const addItem = useCartStore((s) => s.addItem);
+  const openCart = useCartStore((s) => s.openCart);
+
+  useEffect(() => {
+    fetchBestSellerProducts().then((data) => {
+      setBestSellers(data.slice(0, 4));
+    });
+  }, []);
 
   return (
     <section className="py-20 lg:py-32">
@@ -44,7 +54,14 @@ export const BestSellers: React.FC = () => {
                       <span className="text-white/40 line-through text-sm">${product.compareAtPrice.toFixed(2)}</span>
                     )}
                   </div>
-                  <button className="w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:bg-white/10 hover:text-white transition-colors">
+                  <button
+                    onClick={() => {
+                      addItem(product);
+                      openCart();
+                    }}
+                    aria-label={`Add ${product.name} to cart`}
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                  >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M12 5v14M5 12h14"/>
                     </svg>

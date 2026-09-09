@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { sendContactMessage } from '../services/contactService';
 import { ScrollReveal } from '../components/motion/ScrollReveal';
 
 const CONTACT_INFO = [
@@ -9,12 +10,35 @@ const CONTACT_INFO = [
 ];
 
 export function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const [isSending, setIsSending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [feedbackMsg, setFeedbackMsg] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setIsSending(true);
+    try {
+      const res = await sendContactMessage(formData);
+      setSubmitted(true);
+      setFeedbackMsg(res.message || 'Thank you! Your message has been received.');
+      setFormData({ name: '', email: '', phone: '', message: '' });
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const inputStyle = {
@@ -55,13 +79,23 @@ export function ContactPage() {
                 border: '1px solid rgba(255, 255, 255, 0.08)',
               }}
             >
+              {feedbackMsg && submitted && (
+                <div className="mb-5 p-3.5 rounded-xl bg-[#4A7C59]/15 border border-[#4A7C59]/30 text-xs text-[#5C9A6F] flex items-center gap-2">
+                  <span>✓</span>
+                  <span>{feedbackMsg}</span>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                 <div>
                   <label htmlFor="name" className="block text-sm text-[#A8A29E] mb-1.5">Name</label>
                   <input
                     id="name"
+                    name="name"
                     type="text"
                     required
+                    value={formData.name}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59] transition-all"
                     style={inputStyle}
                     placeholder="Your name"
@@ -71,8 +105,11 @@ export function ContactPage() {
                   <label htmlFor="email" className="block text-sm text-[#A8A29E] mb-1.5">Email</label>
                   <input
                     id="email"
+                    name="email"
                     type="email"
                     required
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59] transition-all"
                     style={inputStyle}
                     placeholder="you@email.com"
@@ -84,7 +121,10 @@ export function ContactPage() {
                 <label htmlFor="phone" className="block text-sm text-[#A8A29E] mb-1.5">Phone (optional)</label>
                 <input
                   id="phone"
+                  name="phone"
                   type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59] transition-all"
                   style={inputStyle}
                   placeholder="+1 (555) 000-0000"
@@ -95,8 +135,11 @@ export function ContactPage() {
                 <label htmlFor="message" className="block text-sm text-[#A8A29E] mb-1.5">Message</label>
                 <textarea
                   id="message"
+                  name="message"
                   required
                   rows={5}
+                  value={formData.message}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl text-sm text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59] transition-all resize-none"
                   style={inputStyle}
                   placeholder="Tell us what's on your mind..."
@@ -105,10 +148,20 @@ export function ContactPage() {
 
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:translate-y-[-1px]"
+                disabled={isSending}
+                className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:translate-y-[-1px] disabled:opacity-50 flex items-center justify-center gap-2"
                 style={{ background: '#F5F0EB', color: '#0A0A0A' }}
               >
-                {submitted ? '✓ Message Sent!' : 'Send Message'}
+                {isSending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <span>Sending Message...</span>
+                  </>
+                ) : submitted ? (
+                  '✓ Message Sent!'
+                ) : (
+                  'Send Message'
+                )}
               </button>
             </form>
           </ScrollReveal>

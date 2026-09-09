@@ -7,4 +7,21 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on('error', (err) => {
+            // Suppress noisy ECONNREFUSED logs while backend starts or is in offline mode
+            if ((err as NodeJS.ErrnoException).code === 'ECONNREFUSED') {
+              return;
+            }
+            console.error('[vite-proxy error]', err);
+          });
+        },
+      },
+    },
+  },
 })

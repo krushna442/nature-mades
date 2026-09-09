@@ -1,14 +1,36 @@
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { products } from '../data/products';
-import { categories } from '../data/categories';
 import { ProductGrid } from '../components/products/ProductGrid';
 import { ScrollReveal } from '../components/motion/ScrollReveal';
+import { fetchProducts, fetchCategories } from '../services/productService';
+import type { Product, Category } from '../types';
 
 export function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category') || 'all';
   const sortParam = searchParams.get('sort') || 'featured';
+
+  const [productsList, setProductsList] = useState<Product[]>([]);
+  const [categoriesList, setCategoriesList] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCategories().then(setCategoriesList);
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchProducts({
+      category: categoryParam,
+      sortBy: sortParam,
+    })
+      .then((res) => {
+        setProductsList(res.products);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [categoryParam, sortParam]);
 
   const setCategory = (cat: string) => {
     setSearchParams(prev => {
@@ -27,32 +49,6 @@ export function ShopPage() {
       return prev;
     });
   };
-
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
-
-    if (categoryParam !== 'all') {
-      result = result.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
-    }
-
-    switch (sortParam) {
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'top-rated':
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case 'featured':
-      default:
-        result.sort((a, b) => (b.featured === a.featured ? 0 : b.featured ? 1 : -1));
-        break;
-    }
-
-    return result;
-  }, [categoryParam, sortParam]);
 
   return (
     <div className="min-h-screen pt-28 pb-20">
@@ -80,9 +76,9 @@ export function ShopPage() {
               >
                 All
               </button>
-              {categories.map((cat) => (
+              {categoriesList.map((cat) => (
                 <button
-                  key={cat.id}
+                  key={cat.id || cat.slug}
                   onClick={() => setCategory(cat.slug)}
                   className={`whitespace-nowrap rounded-full px-5 py-2 text-sm font-medium transition-colors ${
                     categoryParam === cat.slug ? 'bg-accent text-white' : 'text-primary hover:bg-white/10'
@@ -118,7 +114,14 @@ export function ShopPage() {
           </div>
         </ScrollReveal>
 
-        <ProductGrid products={filteredProducts} />
+        {loading ? (
+          <div className="py-20 text-center text-[#A8A29E]">
+            <div className="inline-block w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-3"></div>
+            <p className="text-sm">Loading handcrafted products...</p>
+          </div>
+        ) : (
+          <ProductGrid products={productsList} />
+        )}
       </div>
     </div>
   );
