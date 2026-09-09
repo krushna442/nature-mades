@@ -12,15 +12,16 @@ const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ defaul
 const CartPage = lazy(() => import('./pages/CartPage').then(m => ({ default: m.CartPage })));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then(m => ({ default: m.CheckoutPage })));
 const AccountPage = lazy(() => import('./pages/AccountPage').then(m => ({ default: m.AccountPage })));
+const OrdersPage = lazy(() => import('./pages/OrdersPage').then(m => ({ default: m.OrdersPage })));
 
 function PageLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div
-          className="w-8 h-8 rounded-full border-2 border-white/10 border-t-[#4A7C59] animate-spin"
+          className="w-8 h-8 rounded-full border-2 border-white/10 border-t-[#486838] animate-spin"
         />
-        <span className="text-sm text-[#78716C]">Loading...</span>
+        <span className="text-sm text-[#786848]">Loading...</span>
       </div>
     </div>
   );
@@ -41,6 +42,7 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/account" element={<AccountPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
@@ -59,13 +61,13 @@ function NotFound() {
         >
           404
         </h1>
-        <p className="text-[#A8A29E] mb-6">Page not found</p>
+        <p className="text-[#786848] mb-6">Page not found</p>
         <a
           href="/"
-          className="inline-flex items-center px-5 py-2.5 rounded-xl text-sm font-medium transition-colors"
+          className="inline-flex items-center px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:brightness-110 shadow-md shadow-[#486838]/20"
           style={{
-            background: '#F5F0EB',
-            color: '#0A0A0A',
+            background: '#486838',
+            color: '#F8F8E8',
           }}
         >
           Go Home

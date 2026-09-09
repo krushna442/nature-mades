@@ -66,16 +66,16 @@ export function AccountPage() {
               }}
             >
               <div className="text-center mb-6">
-                <span className="text-xs font-semibold uppercase tracking-widest text-[#4A7C59]">
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#486838]">
                   NatureMades Sanctuary
                 </span>
                 <h1
-                  className="text-2xl sm:text-3xl font-bold text-[#F5F0EB] mt-2"
+                  className="text-2xl sm:text-3xl font-bold text-[#F8F8E8] mt-2"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
                   {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
                 </h1>
-                <p className="text-xs text-[#A8A29E] mt-1.5">
+                <p className="text-xs text-[#786848] mt-1.5">
                   {authMode === 'login'
                     ? 'Sign in to access your orders and saved artisan crafts.'
                     : 'Join our handcrafted community today.'}
@@ -92,8 +92,8 @@ export function AccountPage() {
                   }}
                   className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${
                     authMode === 'login'
-                      ? 'bg-white/[0.12] text-[#F5F0EB] shadow-sm'
-                      : 'text-[#78716C] hover:text-[#A8A29E]'
+                      ? 'bg-[#486838] text-[#F8F8E8] shadow-sm'
+                      : 'text-[#786848] hover:text-[#F8F8E8]'
                   }`}
                 >
                   Sign In
@@ -106,8 +106,8 @@ export function AccountPage() {
                   }}
                   className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${
                     authMode === 'register'
-                      ? 'bg-white/[0.12] text-[#F5F0EB] shadow-sm'
-                      : 'text-[#78716C] hover:text-[#A8A29E]'
+                      ? 'bg-[#486838] text-[#F8F8E8] shadow-sm'
+                      : 'text-[#786848] hover:text-[#F8F8E8]'
                   }`}
                 >
                   Register
@@ -119,7 +119,7 @@ export function AccountPage() {
                 <button
                   type="button"
                   onClick={handleSimulateGoogle}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs font-medium flex items-center justify-center gap-2.5 border border-white/[0.1] hover:bg-white/[0.05] transition-colors text-[#F5F0EB]"
+                  className="w-full py-2.5 px-4 rounded-xl text-xs font-medium flex items-center justify-center gap-2.5 border border-white/[0.1] hover:bg-white/[0.05] transition-colors text-[#F8F8E8]"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24">
                     <path
@@ -145,7 +145,7 @@ export function AccountPage() {
                 <button
                   type="button"
                   onClick={handleSimulateInstagram}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs font-medium flex items-center justify-center gap-2.5 border border-white/[0.1] hover:bg-white/[0.05] transition-colors text-[#F5F0EB]"
+                  className="w-full py-2.5 px-4 rounded-xl text-xs font-medium flex items-center justify-center gap-2.5 border border-white/[0.1] hover:bg-white/[0.05] transition-colors text-[#F8F8E8]"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[#E1306C]">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -156,7 +156,7 @@ export function AccountPage() {
 
               <div className="relative flex items-center justify-center mb-6">
                 <div className="border-t border-white/[0.08] w-full" />
-                <span className="bg-[#111111] px-3 text-[10px] uppercase tracking-wider text-[#78716C] absolute">
+                <span className="bg-[#111111] px-3 text-[10px] uppercase tracking-wider text-[#786848] absolute">
                   Or with email
                 </span>
               </div>
@@ -171,41 +171,41 @@ export function AccountPage() {
               <form onSubmit={handleSubmitAuth} className="space-y-4">
                 {authMode === 'register' && (
                   <div>
-                    <label className="block text-xs text-[#A8A29E] mb-1">Your Name</label>
+                    <label className="block text-xs text-[#786848] mb-1">Your Name</label>
                     <input
                       type="text"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Jane Doe"
-                      className="w-full px-4 py-2.5 rounded-xl text-xs text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                      className="w-full px-4 py-2.5 rounded-xl text-xs text-[#F8F8E8] placeholder:text-[#5e5038] outline-none focus:ring-1 focus:ring-[#486838]"
                       style={inputStyle}
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs text-[#A8A29E] mb-1">Email Address</label>
+                  <label className="block text-xs text-[#786848] mb-1">Email Address</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-2.5 rounded-xl text-xs text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                    className="w-full px-4 py-2.5 rounded-xl text-xs text-[#F8F8E8] placeholder:text-[#5e5038] outline-none focus:ring-1 focus:ring-[#486838]"
                     style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs text-[#A8A29E] mb-1">Password</label>
+                  <label className="block text-xs text-[#786848] mb-1">Password</label>
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-4 py-2.5 rounded-xl text-xs text-[#F5F0EB] placeholder:text-[#78716C] outline-none focus:ring-1 focus:ring-[#4A7C59]"
+                    className="w-full px-4 py-2.5 rounded-xl text-xs text-[#F8F8E8] placeholder:text-[#5e5038] outline-none focus:ring-1 focus:ring-[#486838]"
                     style={inputStyle}
                   />
                 </div>
@@ -213,7 +213,7 @@ export function AccountPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 rounded-xl text-xs font-semibold text-[#0A0A0A] bg-[#F5F0EB] hover:bg-white transition-colors disabled:opacity-50 mt-2"
+                  className="w-full py-3 rounded-xl text-xs font-semibold text-[#F8F8E8] bg-[#486838] hover:bg-[#5e844a] transition-colors disabled:opacity-50 mt-2 shadow-sm shadow-[#486838]/20"
                 >
                   {isLoading ? 'Processing...' : authMode === 'login' ? 'Sign In' : 'Create Account'}
                 </button>
@@ -231,22 +231,33 @@ export function AccountPage() {
         <ScrollReveal>
           <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
             <div>
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#486838]">
+                Patron Dashboard
+              </span>
               <h1
-                className="text-3xl font-bold text-[#F5F0EB]"
+                className="text-3xl font-bold text-[#F8F8E8] mt-1"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
                 My Sanctuary
               </h1>
-              <p className="text-xs text-[#A8A29E] mt-1">
-                Welcome back, <span className="text-[#F5F0EB] font-medium">{user?.name}</span>
+              <p className="text-xs text-[#786848] mt-1">
+                Welcome back, <span className="text-[#F8F8E8] font-medium">{user?.name}</span>
               </p>
             </div>
-            <button
-              onClick={logout}
-              className="text-xs font-medium px-4 py-2 rounded-xl text-[#A8A29E] hover:text-white border border-white/[0.08] hover:bg-white/[0.04] transition-colors"
-            >
-              Sign Out
-            </button>
+            <div className="flex items-center gap-3">
+              <Link
+                to="/orders"
+                className="text-xs font-medium px-4 py-2 rounded-xl text-[#F8F8E8] bg-white/[0.06] border border-white/[0.1] hover:bg-white/[0.1] transition-colors"
+              >
+                View Orders Page →
+              </Link>
+              <button
+                onClick={logout}
+                className="text-xs font-medium px-4 py-2 rounded-xl text-[#786848] hover:text-[#F8F8E8] border border-white/[0.08] hover:bg-white/[0.04] transition-colors"
+              >
+                Log Out
+              </button>
+            </div>
           </div>
         </ScrollReveal>
 
@@ -268,8 +279,8 @@ export function AccountPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-5 py-3.5 text-sm font-medium whitespace-nowrap transition-colors ${
                     activeTab === tab
-                      ? 'text-[#F5F0EB] border-b-2 border-[#4A7C59]'
-                      : 'text-[#78716C] hover:text-[#A8A29E]'
+                      ? 'text-[#F8F8E8] border-b-2 border-[#486838]'
+                      : 'text-[#786848] hover:text-[#F8F8E8]'
                   }`}
                 >
                   {tab}
@@ -281,24 +292,24 @@ export function AccountPage() {
             <div className="p-6 lg:p-8">
               {activeTab === 'Profile' && (
                 <div className="space-y-5">
-                  <div className="flex items-center gap-4 pb-4 border-b border-white/[0.06]">
-                    <div className="w-14 h-14 rounded-full bg-[#4A7C59]/20 border border-[#4A7C59]/40 flex items-center justify-center text-xl font-bold text-[#F5F0EB]">
+                  <div className="flex items-center gap-4 pb-4 border-b border-[#786848]/20">
+                    <div className="w-14 h-14 rounded-full bg-[#486838]/20 border border-[#486838]/40 flex items-center justify-center text-xl font-bold text-[#F8F8E8]">
                       {user?.name?.[0]?.toUpperCase() || 'U'}
                     </div>
                     <div>
-                      <h2 className="text-base font-medium text-[#F5F0EB]">{user?.name}</h2>
-                      <p className="text-xs text-[#78716C]">{user?.email}</p>
+                      <h2 className="text-base font-medium text-[#F8F8E8]">{user?.name}</h2>
+                      <p className="text-xs text-[#786848]">{user?.email}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <span className="text-xs text-[#78716C] uppercase tracking-wider">Account ID</span>
-                      <p className="text-xs font-mono text-[#F5F0EB] mt-0.5">{user?.id}</p>
+                      <span className="text-xs text-[#786848] uppercase tracking-wider">Account ID</span>
+                      <p className="text-xs font-mono text-[#F8F8E8] mt-0.5">{user?.id}</p>
                     </div>
                     <div>
-                      <span className="text-xs text-[#78716C] uppercase tracking-wider">Default Status</span>
-                      <p className="text-xs text-[#4A7C59] mt-0.5 font-medium">Verified Handcrafted Patron</p>
+                      <span className="text-xs text-[#786848] uppercase tracking-wider">Default Status</span>
+                      <p className="text-xs text-[#486838] mt-0.5 font-medium">Verified Handcrafted Patron</p>
                     </div>
                   </div>
                 </div>
@@ -308,38 +319,38 @@ export function AccountPage() {
                 <div>
                   {isLoadingOrders ? (
                     <div className="py-12 text-center">
-                      <div className="inline-block w-6 h-6 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin mb-2" />
-                      <p className="text-xs text-[#A8A29E]">Fetching your order records...</p>
+                      <div className="inline-block w-6 h-6 border-2 border-[#486838] border-t-transparent rounded-full animate-spin mb-2" />
+                      <p className="text-xs text-[#786848]">Fetching your order records...</p>
                     </div>
                   ) : orders.length > 0 ? (
                     <div className="space-y-4">
                       {orders.map((ord) => (
                         <div
                           key={ord.id}
-                          className="p-4 rounded-xl border border-white/[0.06] bg-white/[0.02]"
+                          className="p-4 rounded-xl border border-[#786848]/20 bg-white/[0.02]"
                         >
                           <div className="flex items-center justify-between mb-2">
-                            <span className="font-mono text-xs font-bold text-[#F5F0EB]">
+                            <span className="font-mono text-xs font-bold text-[#F8F8E8]">
                               {ord.orderNumber}
                             </span>
-                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#4A7C59]/20 text-[#5C9A6F] border border-[#4A7C59]/30">
+                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#486838]/20 text-[#F8F8E8] border border-[#486838]/40 font-medium">
                               {ord.orderStatus}
                             </span>
                           </div>
-                          <div className="text-xs text-[#78716C] mb-3">
+                          <div className="text-xs text-[#786848] mb-3">
                             Placed on {new Date(ord.createdAt).toLocaleDateString()} • {ord.deliveryMethod} Delivery
                           </div>
                           <div className="space-y-1 mb-3">
                             {ord.items.map((it, idx) => (
                               <div key={idx} className="flex justify-between text-xs">
-                                <span className="text-[#A8A29E]">{it.name} × {it.quantity}</span>
-                                <span className="text-[#F5F0EB]">${(it.price * it.quantity).toFixed(2)}</span>
+                                <span className="text-[#786848]">{it.name} × {it.quantity}</span>
+                                <span className="text-[#F8F8E8]">${(it.price * it.quantity).toFixed(2)}</span>
                               </div>
                             ))}
                           </div>
-                          <div className="pt-2 border-t border-white/[0.06] flex justify-between text-xs font-semibold">
-                            <span className="text-[#A8A29E]">Total Paid</span>
-                            <span className="text-[#F5F0EB]">${ord.total.toFixed(2)}</span>
+                          <div className="pt-2 border-t border-[#786848]/20 flex justify-between text-xs font-semibold">
+                            <span className="text-[#786848]">Total Paid</span>
+                            <span className="text-[#F8F8E8]">${ord.total.toFixed(2)}</span>
                           </div>
                         </div>
                       ))}
@@ -369,16 +380,16 @@ function EmptyState({ icon, message, action, link }: { icon: string; message: st
   return (
     <div className="text-center py-12">
       <span className="text-3xl mb-3 block opacity-40">{icon}</span>
-      <p className="text-sm text-[#A8A29E] mb-4">{message}</p>
+      <p className="text-sm text-[#786848] mb-4">{message}</p>
       {link ? (
         <Link
           to={link}
-          className="inline-flex px-5 py-2 rounded-xl text-sm font-medium text-[#F5F0EB] border border-white/[0.1] hover:bg-white/[0.04] transition-colors"
+          className="inline-flex px-5 py-2 rounded-xl text-sm font-medium text-[#F8F8E8] border border-[#786848]/30 hover:bg-[#486838]/20 transition-colors"
         >
           {action}
         </Link>
       ) : (
-        <button className="px-5 py-2 rounded-xl text-sm font-medium text-[#F5F0EB] border border-white/[0.1] hover:bg-white/[0.04] transition-colors">
+        <button className="px-5 py-2 rounded-xl text-sm font-medium text-[#F8F8E8] border border-[#786848]/30 hover:bg-[#486838]/20 transition-colors">
           {action}
         </button>
       )}

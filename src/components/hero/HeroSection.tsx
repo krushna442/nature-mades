@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { GlassBadge } from '../glass';
 
 export const HeroSection: React.FC = () => {
   return (
@@ -12,7 +11,7 @@ export const HeroSection: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="font-serif text-2xl sm:text-7xl text-gray-400] tracking-tight mb-6 whitespace-pre-line"
+          className="font-serif text-3xl sm:text-7xl text-[#F8F8E8] tracking-tight mb-6 whitespace-pre-line"
           style={{
             lineHeight: 1.1,
           }}
@@ -24,7 +23,7 @@ export const HeroSection: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-white/70 text-lg sm:text-sm max-w-2xl mx-auto mb-10"
+          className="text-[#786848] text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           Discover handcrafted essentials made with natural ingredients and timeless craft.
         </motion.p>
@@ -33,20 +32,20 @@ export const HeroSection: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-4  "
+          className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <Link
             to="/shop"
-            className="px-8 py-3.5 bg-[#F5F0EB] text-[#0A0A0A] font-medium rounded-full hover:bg-white transition-colors"
+            className="px-8 py-3.5 bg-[#486838] text-[#F8F8E8] font-semibold rounded-full hover:bg-[#5e844a] transition-all duration-200 shadow-lg shadow-[#486838]/20"
           >
             Shop Collection
           </Link>
           <Link
             to="/crafts"
-            className="px-8 py-3.5 text-white font-medium rounded-full transition-colors hover:bg-white/10"
+            className="px-8 py-3.5 text-[#F8F8E8] font-medium rounded-full transition-colors hover:bg-white/10"
             style={{
               background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
+              border: '1px solid rgba(248, 248, 232, 0.2)',
               backdropFilter: 'blur(8px)',
               WebkitBackdropFilter: 'blur(8px)',
             }}

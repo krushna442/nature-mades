@@ -63,11 +63,11 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <button
             onClick={handleWishlist}
-            className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-white transition-transform hover:scale-110"
+            className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-[#F8F8E8] transition-transform hover:scale-110"
             style={{
-              background: 'rgba(0,0,0,0.3)',
+              background: 'rgba(0,0,0,0.4)',
               backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255,255,255,0.2)'
+              border: '1px solid rgba(255,255,255,0.15)'
             }}
             aria-label="Add to wishlist"
           >
@@ -79,24 +79,24 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
           <div>
-            <div className="mb-1 flex items-center gap-1 text-sm text-yellow-500">
+            <div className="mb-1.5 flex items-center gap-1 text-sm text-[#C4A35A]">
               <span className="flex">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <span key={i}>{i < Math.floor(product.rating) ? '★' : '☆'}</span>
                 ))}
               </span>
-              <span className="text-xs text-secondary">({product.reviewCount})</span>
+              <span className="text-xs text-[#786848]">({product.reviewCount})</span>
             </div>
             
-            <h3 className="font-heading text-lg font-medium text-primary line-clamp-1">{product.name}</h3>
-            <p className="mt-1 text-sm text-secondary line-clamp-1">{product.shortDescription}</p>
+            <h3 className="font-heading text-lg font-medium text-[#F8F8E8] line-clamp-1">{product.name}</h3>
+            <p className="mt-1 text-xs sm:text-sm text-[#786848] line-clamp-1 leading-relaxed">{product.shortDescription}</p>
           </div>
           
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-semibold text-primary">${product.price.toFixed(2)}</span>
+              <span className="text-lg font-semibold text-[#F8F8E8] font-mono">${product.price.toFixed(2)}</span>
               {product.compareAtPrice && (
-                <span className="text-sm text-secondary line-through">${product.compareAtPrice.toFixed(2)}</span>
+                <span className="text-xs text-[#786848] line-through font-mono">${product.compareAtPrice.toFixed(2)}</span>
               )}
             </div>
           </div>
@@ -106,7 +106,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="px-4 pb-4 sm:px-5 sm:pb-5">
         <button
           onClick={handleAddToCart}
-          className="w-full rounded-lg bg-accent py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent/90"
+          className="w-full rounded-xl bg-[#486838] py-2.5 text-xs sm:text-sm font-semibold text-[#F8F8E8] transition-all hover:bg-[#5e844a] shadow-sm shadow-[#486838]/20"
         >
           Add to Cart
         </button>

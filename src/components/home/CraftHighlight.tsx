@@ -12,17 +12,17 @@ export const CraftHighlight: React.FC = () => {
             {/* Content */}
             <div className="order-2 lg:order-1">
               <GlassPanel className="p-8 md:p-12">
-                <span className="text-xs text-[#4A7C59] font-medium tracking-widest uppercase mb-4 block">The Craft</span>
-                <h2 className="font-serif text-3xl md:text-5xl text-white mb-6 leading-tight">Watch the making</h2>
-                <p className="text-white/70 mb-8 text-lg">
+                <span className="text-xs text-[#486838] font-semibold tracking-widest uppercase mb-4 block">The Craft</span>
+                <h2 className="font-serif text-3xl md:text-5xl text-[#F8F8E8] mb-6 leading-tight">Watch the making</h2>
+                <p className="text-[#786848] mb-8 text-base sm:text-lg leading-relaxed">
                   Step inside our studio and see how each piece is carefully formulated, poured, and packaged by hand. It's not just production; it's a labor of love.
                 </p>
                 <Link
                   to="/crafts"
-                  className="inline-flex items-center px-6 py-3 rounded-full text-sm font-medium text-white border transition-colors hover:bg-white/10"
+                  className="inline-flex items-center px-6 py-3 rounded-full text-sm font-medium text-[#F8F8E8] border transition-colors hover:bg-white/10"
                   style={{
                     background: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid rgba(255, 255, 255, 0.18)',
+                    border: '1px solid rgba(248, 248, 232, 0.2)',
                   }}
                 >
                   View All Crafts

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useCartStore } from '../../store/cartStore';
+import { useAuthStore } from '../../store/authStore';
 
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
   { label: 'Crafts', href: '/crafts' },
+  { label: 'Orders', href: '/orders' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -17,6 +19,7 @@ export function GlassNavbar() {
   const location = useLocation();
   const itemCount = useCartStore((s) => s.items.reduce((sum, item) => sum + item.quantity, 0));
   const openCart = useCartStore((s) => s.openCart);
+  const { isAuthenticated, user, logout } = useAuthStore();
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -79,8 +82,8 @@ export function GlassNavbar() {
                     to={link.href}
                     className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors duration-200 ${
                       isActive
-                        ? 'text-white bg-white/[0.08]'
-                        : 'text-[#A8A29E] hover:text-white hover:bg-white/[0.05]'
+                        ? 'text-[#F8F8E8] bg-[#486838]/25 border border-[#486838]/40'
+                        : 'text-[#786848] hover:text-[#F8F8E8] hover:bg-white/[0.05]'
                     }`}
                   >
                     {link.label}
@@ -95,7 +98,7 @@ export function GlassNavbar() {
             {/* Cart */}
             <button
               onClick={openCart}
-              className="relative flex items-center justify-center w-10 h-10 rounded-xl text-[#A8A29E] hover:text-white hover:bg-white/[0.05] transition-colors duration-200"
+              className="relative flex items-center justify-center w-10 h-10 rounded-xl text-[#786848] hover:text-[#F8F8E8] hover:bg-white/[0.05] transition-colors duration-200"
               aria-label={`Shopping cart, ${itemCount} items`}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -104,24 +107,42 @@ export function GlassNavbar() {
                 <path d="M16 10a4 4 0 01-8 0" />
               </svg>
               {itemCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold rounded-full bg-[#4A7C59] text-white min-w-[18px]">
+                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold rounded-full bg-[#486838] text-[#F8F8E8] min-w-[18px]">
                   {itemCount}
                 </span>
               )}
             </button>
 
-            {/* Sign In - Desktop */}
-            <Link
-              to="/account"
-              className="hidden sm:flex items-center px-4 py-1.5 rounded-xl text-sm font-medium text-[#F5F0EB] border border-white/[0.12] hover:bg-white/[0.06] transition-colors duration-200"
-            >
-              Sign In
-            </Link>
+            {/* Desktop Auth Button */}
+            {isAuthenticated ? (
+              <div className="hidden sm:flex items-center gap-2">
+                <Link
+                  to="/account"
+                  className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium text-[#F8F8E8] bg-white/[0.05] border border-white/[0.1] hover:bg-white/[0.08] transition-colors"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#486838]" />
+                  <span className="truncate max-w-[100px]">{user?.name?.split(' ')[0] || 'Account'}</span>
+                </Link>
+                <button
+                  onClick={logout}
+                  className="px-3 py-1.5 rounded-xl text-xs font-medium text-[#786848] hover:text-[#F8F8E8] hover:bg-white/[0.04] transition-colors"
+                >
+                  Log Out
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/account"
+                className="hidden sm:flex items-center px-4 py-1.5 rounded-xl text-sm font-medium text-[#F8F8E8] border border-white/[0.12] hover:bg-white/[0.06] transition-colors duration-200"
+              >
+                Sign In
+              </Link>
+            )}
 
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="flex md:hidden items-center justify-center w-10 h-10 rounded-xl text-[#A8A29E] hover:text-white hover:bg-white/[0.05] transition-colors duration-200"
+              className="flex md:hidden items-center justify-center w-10 h-10 rounded-xl text-[#786848] hover:text-[#F8F8E8] hover:bg-white/[0.05] transition-colors duration-200"
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileOpen}
             >
@@ -163,7 +184,7 @@ export function GlassNavbar() {
             <motion.div
               className="absolute top-20 left-4 right-4 rounded-2xl p-6"
               style={{
-                background: 'rgba(10, 10, 10, 0.9)',
+                background: 'rgba(10, 10, 10, 0.92)',
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -182,8 +203,8 @@ export function GlassNavbar() {
                         to={link.href}
                         className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                           isActive
-                            ? 'text-white bg-white/[0.08]'
-                            : 'text-[#A8A29E] hover:text-white hover:bg-white/[0.05]'
+                            ? 'text-[#F8F8E8] bg-white/[0.08]'
+                            : 'text-[#786848] hover:text-[#F8F8E8] hover:bg-white/[0.05]'
                         }`}
                       >
                         {link.label}
@@ -193,12 +214,32 @@ export function GlassNavbar() {
                 })}
               </ul>
               <div className="mt-4 pt-4 border-t border-white/[0.08]">
-                <Link
-                  to="/account"
-                  className="flex items-center justify-center w-full px-4 py-3 rounded-xl text-sm font-medium text-[#F5F0EB] border border-white/[0.12] hover:bg-white/[0.06] transition-colors"
-                >
-                  Sign In
-                </Link>
+                {isAuthenticated ? (
+                  <div className="space-y-2">
+                    <Link
+                      to="/account"
+                      className="flex items-center justify-center w-full px-4 py-3 rounded-xl text-sm font-medium text-[#F8F8E8] bg-white/[0.06] border border-white/[0.1] transition-colors"
+                    >
+                      My Account ({user?.name || 'Patron'})
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setMobileOpen(false);
+                      }}
+                      className="flex items-center justify-center w-full px-4 py-2.5 rounded-xl text-xs font-medium text-[#786848] hover:text-[#F8F8E8] border border-white/[0.06] hover:bg-white/[0.03] transition-colors"
+                    >
+                      Log Out
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    to="/account"
+                    className="flex items-center justify-center w-full px-4 py-3 rounded-xl text-sm font-medium text-[#0A0A0A] bg-[#F8F8E8] hover:bg-white transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                )}
               </div>
             </motion.div>
           </motion.div>

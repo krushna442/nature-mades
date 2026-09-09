@@ -21,14 +21,14 @@ export function AboutPage() {
         {/* Hero */}
         <ScrollReveal>
           <div className="text-center mb-20 lg:mb-28">
-            <span className="text-xs font-medium text-[#4A7C59] uppercase tracking-widest">About Us</span>
+            <span className="text-xs font-semibold text-[#486838] uppercase tracking-widest">About Us</span>
             <h1
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F5F0EB] mt-3 mb-5"
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F8F8E8] mt-3 mb-5"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               Rooted in Nature
             </h1>
-            <p className="text-[#A8A29E] max-w-2xl mx-auto leading-relaxed">
+            <p className="text-[#786848] max-w-2xl mx-auto leading-relaxed">
               We believe the best things come from the earth, shaped by hand, and delivered with care.
               NatureMades was born from a simple idea: that handmade is better.
             </p>
@@ -43,16 +43,16 @@ export function AboutPage() {
               background: 'rgba(255, 255, 255, 0.04)',
               backdropFilter: 'blur(16px)',
               WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(120, 104, 72, 0.2)',
             }}
           >
             <h2
-              className="text-2xl font-bold text-[#F5F0EB] mb-5"
+              className="text-2xl font-bold text-[#F8F8E8] mb-5"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               Our Story
             </h2>
-            <div className="space-y-4 text-sm text-[#A8A29E] leading-relaxed">
+            <div className="space-y-4 text-sm text-[#786848] leading-relaxed">
               <p>
                 It started in a small workshop with a handful of candles and a deep love for natural materials.
                 What began as a passion project has grown into a community of artisans, each dedicated to their craft.
@@ -73,7 +73,7 @@ export function AboutPage() {
         <div className="mb-20">
           <ScrollReveal>
             <h2
-              className="text-2xl font-bold text-[#F5F0EB] text-center mb-10"
+              className="text-2xl font-bold text-[#F8F8E8] text-center mb-10"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               Our Process
@@ -89,12 +89,12 @@ export function AboutPage() {
                 className="rounded-2xl p-6 text-center"
                 style={{
                   background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  border: '1px solid rgba(120, 104, 72, 0.2)',
                 }}
               >
                 <span className="text-3xl mb-3 block">{step.icon}</span>
-                <h3 className="text-base font-semibold text-[#F5F0EB] mb-2">{step.title}</h3>
-                <p className="text-xs text-[#A8A29E] leading-relaxed">{step.desc}</p>
+                <h3 className="text-base font-semibold text-[#F8F8E8] mb-2">{step.title}</h3>
+                <p className="text-xs text-[#786848] leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </StaggerReveal>
@@ -104,7 +104,7 @@ export function AboutPage() {
         <div className="mb-20">
           <ScrollReveal>
             <h2
-              className="text-2xl font-bold text-[#F5F0EB] text-center mb-10"
+              className="text-2xl font-bold text-[#F8F8E8] text-center mb-10"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               Our Values
@@ -120,13 +120,13 @@ export function AboutPage() {
                 className="rounded-2xl p-6"
                 style={{
                   background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  border: '1px solid rgba(120, 104, 72, 0.2)',
                 }}
               >
-                <h3 className="text-lg font-semibold text-[#F5F0EB] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+                <h3 className="text-lg font-semibold text-[#F8F8E8] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
                   {value.title}
                 </h3>
-                <p className="text-sm text-[#A8A29E] leading-relaxed">{value.desc}</p>
+                <p className="text-sm text-[#786848] leading-relaxed">{value.desc}</p>
               </div>
             ))}
           </StaggerReveal>
@@ -137,7 +137,7 @@ export function AboutPage() {
           <div className="text-center mb-20 max-w-3xl mx-auto">
             <blockquote>
               <p
-                className="text-xl sm:text-2xl lg:text-3xl text-[#F5F0EB] leading-relaxed italic"
+                className="text-xl sm:text-2xl lg:text-3xl text-[#F8F8E8] leading-relaxed italic"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
                 "We believe in the beauty of things made slowly, with intention and care."
@@ -149,12 +149,12 @@ export function AboutPage() {
         {/* CTA */}
         <ScrollReveal>
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-[#F5F0EB] mb-3">Ready to experience handmade?</h2>
-            <p className="text-sm text-[#A8A29E] mb-6">Browse our handcrafted collection</p>
+            <h2 className="text-xl font-semibold text-[#F8F8E8] mb-3">Ready to experience handmade?</h2>
+            <p className="text-sm text-[#786848] mb-6">Browse our handcrafted collection</p>
             <Link
               to="/shop"
-              className="inline-flex px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:translate-y-[-1px]"
-              style={{ background: '#F5F0EB', color: '#0A0A0A' }}
+              className="inline-flex px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:brightness-110 shadow-lg shadow-[#486838]/25"
+              style={{ background: '#486838', color: '#F8F8E8' }}
             >
               Shop Now
             </Link>

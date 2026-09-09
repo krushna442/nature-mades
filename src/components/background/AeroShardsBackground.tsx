@@ -34,8 +34,8 @@ export function AeroShardsBackground({ placement, className = '' }: AeroShardsBa
     >
       <AeroShards
         backgroundColor="#0A0A0A"
-        shardColor="#4A7C59"
-        accentColor="#5C9A6F"
+        shardColor="#486838"
+        accentColor="#786848"
         placement={placement}
         flow="stream"
         material="pearl"

@@ -22,9 +22,12 @@ export const BestSellers: React.FC = () => {
         <ScrollReveal>
           <div className="mb-12 flex justify-between items-end">
             <div>
-              <h2 className="font-serif text-3xl md:text-4xl text-white">Best Sellers</h2>
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#486838] block mb-2">
+                Community Favorites
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl text-[#F8F8E8]">Best Sellers</h2>
             </div>
-            <Link to="/shop" className="text-sm text-white border-b border-white/30 hover:border-white pb-1 transition-colors">
+            <Link to="/shop" className="text-sm text-[#786848] border-b border-[#786848]/40 hover:text-[#F8F8E8] hover:border-[#F8F8E8] pb-1 transition-colors">
               Shop All
             </Link>
           </div>
@@ -34,24 +37,24 @@ export const BestSellers: React.FC = () => {
           {bestSellers.map((product) => (
             <div key={product.id} className="flex flex-col group">
               <Link to={`/product/${product.slug}`} className="block relative aspect-[4/5] rounded-xl overflow-hidden mb-4">
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#2a2a2a] to-transparent flex items-center justify-center border border-white/5">
-                  <span className="text-4xl font-serif text-white/40">{product.name.charAt(0)}</span>
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#1f261c] to-transparent flex items-center justify-center border border-white/5">
+                  <span className="text-4xl font-serif text-[#F8F8E8]/40">{product.name.charAt(0)}</span>
                 </div>
               </Link>
               <div className="flex-1 flex flex-col">
-                <span className="text-xs text-[#4A7C59] uppercase tracking-wider mb-1">{product.category}</span>
-                <Link to={`/product/${product.slug}`} className="text-white font-medium mb-1 hover:text-[#4A7C59] transition-colors line-clamp-1">
+                <span className="text-xs text-[#486838] uppercase tracking-wider mb-1 font-medium">{product.category}</span>
+                <Link to={`/product/${product.slug}`} className="text-[#F8F8E8] font-medium mb-1 hover:text-[#5e844a] transition-colors line-clamp-1">
                   {product.name}
                 </Link>
-                <div className="flex items-center text-[#F5F0EB]/60 text-xs mb-3">
-                  <span className="text-[#F5F0EB] mr-1">{'★'.repeat(Math.round(product.rating))}</span>
-                  <span className="opacity-50">({product.reviewCount})</span>
+                <div className="flex items-center text-[#786848] text-xs mb-3">
+                  <span className="text-[#C4A35A] mr-1">{'★'.repeat(Math.round(product.rating))}</span>
+                  <span className="opacity-70">({product.reviewCount})</span>
                 </div>
                 <div className="mt-auto flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-white">${product.price.toFixed(2)}</span>
+                    <span className="text-[#F8F8E8] font-semibold">${product.price.toFixed(2)}</span>
                     {product.compareAtPrice && (
-                      <span className="text-white/40 line-through text-sm">${product.compareAtPrice.toFixed(2)}</span>
+                      <span className="text-[#786848] line-through text-xs">${product.compareAtPrice.toFixed(2)}</span>
                     )}
                   </div>
                   <button

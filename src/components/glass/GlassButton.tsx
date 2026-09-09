@@ -15,20 +15,20 @@ const sizes = {
 
 const variants = {
   primary: {
-    className: 'bg-[#F5F0EB] text-[#0A0A0A] border-transparent font-medium shadow-md hover:bg-white',
+    className: 'bg-[#486838] text-[#F8F8E8] border-transparent font-medium shadow-md hover:brightness-110',
     style: {},
   },
   secondary: {
-    className: 'text-white border-solid font-medium hover:brightness-110 shadow-sm',
+    className: 'text-[#F8F8E8] border-solid font-medium hover:bg-[#486838]/20 shadow-sm',
     style: {
       background: 'rgba(255,255,255,0.07)',
-      borderColor: 'rgba(255,255,255,0.12)',
+      borderColor: 'rgba(120, 104, 72, 0.25)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
     },
   },
   ghost: {
-    className: 'bg-transparent text-white border-transparent hover:bg-white/10 font-medium',
+    className: 'bg-transparent text-[#786848] hover:text-[#F8F8E8] border-transparent hover:bg-white/10 font-medium',
     style: {},
   },
 };

@@ -5,15 +5,15 @@
   --color-bg-primary: #0A0A0A;
   --color-bg-secondary: #111111;
   --color-bg-tertiary: #1A1A1A;
-  --color-text-primary: #F5F0EB;
-  --color-text-secondary: #A8A29E;
-  --color-text-muted: #78716C;
-  --color-accent: #4A7C59;
-  --color-accent-light: #5C9A6F;
+  --color-text-primary: #F8F8E8;
+  --color-text-secondary: #786848;
+  --color-text-muted: #5e5038;
+  --color-accent: #486838;
+  --color-accent-light: #5e844a;
+  --color-accent-earth: #786848;
+  --color-accent-cream: #F8F8E8;
   --color-accent-gold: #C4A35A;
-  --color-accent-brown: #8B6F47;
   --color-accent-sand: #D4C5A9;
-  --color-accent-beige: #E8DFD0;
   --font-heading: 'DM Serif Display', serif;
   --font-body: 'Inter', system-ui, sans-serif;
 }
