@@ -63,11 +63,9 @@ export function GlassNavbar() {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-1 text-xl font-semibold tracking-tight shrink-0"
-            style={{ fontFamily: 'var(--font-body)' }}
+            className="flex items-center gap-1 text-xl  font-semibold tracking-tight shrink-0"
           >
-            <span className="text-[#F5F0EB]">Nature</span>
-            <span className="text-[#4A7C59] font-bold">Mades</span>
+           <img src='/logo.png' className='w-[180px]'/>
           </Link>
 
           {/* Desktop Nav */}
