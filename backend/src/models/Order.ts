@@ -6,6 +6,8 @@ export interface IOrderItem {
   name: string;
   price: number;
   quantity: number;
+  image?: string;
+  description?: string;
 }
 
 export interface IOrder extends Document {
@@ -41,6 +43,8 @@ const OrderItemSchema = new Schema<IOrderItem>(
     name: { type: String, required: true },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true, min: 1 },
+    image: { type: String },
+    description: { type: String },
   },
   { _id: false }
 );

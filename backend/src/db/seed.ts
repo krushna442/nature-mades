@@ -6,6 +6,8 @@ import { connectDB } from '../config/db.js';
 import { Category } from '../models/Category.js';
 import { Product } from '../models/Product.js';
 import { CraftVideo } from '../models/CraftVideo.js';
+import { User } from '../models/User.js';
+import bcrypt from 'bcryptjs';
 
 const SEED_CATEGORIES = [
   {
@@ -556,6 +558,32 @@ async function seed() {
   console.log(` - ${SEED_CATEGORIES.length} Categories`);
   console.log(` - ${SEED_PRODUCTS.length} Products`);
   console.log(` - ${SEED_CRAFTS.length} Craft Videos`);
+
+  // Seed admin user
+  let existingAdmin = await User.findOne({ email: 'admin@naturemades.com' });
+  if (!existingAdmin) {
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash('Admin@123456', salt);
+    await User.create({
+      name: 'NatureMades Admin',
+      email: 'admin@naturemades.com',
+      passwordHash,
+      role: 'admin',
+      providers: { local: { enabled: true } },
+    });
+    console.log('[Seed] Admin user created: admin@naturemades.com / Admin@123456');
+  } else {
+    existingAdmin.role = 'admin';
+    await existingAdmin.save();
+    console.log('[Seed] Admin user verified as master admin.');
+  }
+
+  // Ensure all other users are strictly 'customer'
+  await User.updateMany(
+    { email: { $ne: 'admin@naturemades.com' } },
+    { $set: { role: 'customer' } }
+  );
+  console.log('[Seed] All patrons verified with customer role.');
 
   await mongoose.disconnect();
   console.log('[Seed] Finished and disconnected.');

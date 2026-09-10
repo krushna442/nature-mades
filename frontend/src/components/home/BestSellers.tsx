@@ -52,9 +52,9 @@ export const BestSellers: React.FC = () => {
                 </div>
                 <div className="mt-auto flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-[#F8F8E8] font-semibold">${product.price.toFixed(2)}</span>
+                    <span className="text-[#F8F8E8] font-semibold">₹{product.price.toFixed(2)}</span>
                     {product.compareAtPrice && (
-                      <span className="text-[#786848] line-through text-xs">${product.compareAtPrice.toFixed(2)}</span>
+                      <span className="text-[#786848] line-through text-xs">₹{product.compareAtPrice.toFixed(2)}</span>
                     )}
                   </div>
                   <button

@@ -3,22 +3,26 @@ import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { fetchMyOrders, type OrderHistoryItem } from '../services/orderService';
 import { ScrollReveal, StaggerReveal } from '../components/motion/ScrollReveal';
+import { OrderStatusTracker } from '../components/orders/OrderStatusTracker';
 
 export function OrdersPage() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isInitialized } = useAuthStore();
   const [orders, setOrders] = useState<OrderHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     if (isAuthenticated) {
+      setLoading(true);
       fetchMyOrders()
         .then((data) => setOrders(data))
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isInitialized]);
 
   const filteredOrders = selectedStatus === 'all'
     ? orders
@@ -78,8 +82,14 @@ export function OrdersPage() {
           </div>
         </ScrollReveal>
 
-        {/* Not Authenticated State */}
-        {!isAuthenticated ? (
+        {/* Auth Loading State */}
+        {!isInitialized || (isAuthenticated && loading) ? (
+          <div className="py-24 text-center">
+            <div className="inline-block w-8 h-8 border-2 border-[#486838] border-t-transparent rounded-full animate-spin mb-3" />
+            <p className="text-sm text-[#786848]">Retrieving your handcrafted order records...</p>
+          </div>
+        ) : !isAuthenticated ? (
+          /* Not Authenticated State */
           <ScrollReveal>
             <div
               className="rounded-3xl p-10 text-center max-w-lg mx-auto"
@@ -109,11 +119,6 @@ export function OrdersPage() {
               </Link>
             </div>
           </ScrollReveal>
-        ) : loading ? (
-          <div className="py-24 text-center">
-            <div className="inline-block w-8 h-8 border-2 border-[#486838] border-t-transparent rounded-full animate-spin mb-3" />
-            <p className="text-sm text-[#786848]">Retrieving your handcrafted order records...</p>
-          </div>
         ) : orders.length === 0 ? (
           /* Empty Orders State */
           <ScrollReveal>
@@ -148,7 +153,7 @@ export function OrdersPage() {
           <div className="space-y-6">
             {/* Status Filter Bar */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2">
-              {['all', 'processing', 'completed', 'delivered'].map((status) => (
+              {['all', 'processing', 'shipped', 'delivered'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setSelectedStatus(status)}
@@ -200,53 +205,139 @@ export function OrdersPage() {
                     </div>
                   </div>
 
+                  <OrderStatusTracker status={order.orderStatus} />
+
                   {/* Items List */}
-                  <div className="py-4 space-y-3">
-                    {order.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-xs font-bold text-[#786848]">
-                            {item.name ? item.name[0] : '•'}
-                          </div>
-                          <div>
-                            <span className="font-medium text-[#F8F8E8] block">{item.name}</span>
-                            <span className="text-xs text-[#786848]">Quantity: {item.quantity}</span>
+                  <div className="py-4 space-y-3 divide-y divide-white/[0.04]">
+                    {order.items.map((item, idx) => {
+                      const itemSlug = item.slug || item.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                      const initial = item.name ? item.name.charAt(0).toUpperCase() : '🌿';
+
+                      return (
+                        <div key={idx} className="pt-3 first:pt-0 flex items-center justify-between gap-4 text-sm">
+                          <Link
+                            to={`/product/${itemSlug}`}
+                            className="flex items-center gap-3.5 group flex-1 min-w-0"
+                          >
+                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/[0.04] border border-white/[0.08] shrink-0 flex items-center justify-center relative">
+                              {item.image ? (
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  loading="lazy"
+                                  className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                  onError={(e) => {
+                                    // Remove image and show botanical initial fallback without looping
+                                    const img = e.currentTarget;
+                                    img.style.display = 'none';
+                                    if (img.parentElement) {
+                                      const fallback = img.parentElement.querySelector('.item-initial-fallback');
+                                      if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                                    }
+                                  }}
+                                />
+                              ) : null}
+                              <div
+                                className={`item-initial-fallback ${item.image ? 'hidden' : 'flex'} w-full h-full items-center justify-center bg-[#486838]/20 text-[#F8F8E8] font-bold text-lg font-heading`}
+                              >
+                                {initial}
+                              </div>
+                            </div>
+                            <div className="min-w-0">
+                              <span className="font-semibold text-[#F8F8E8] group-hover:text-[#486838] transition-colors block truncate">
+                                {item.name}
+                              </span>
+                              {item.description && (
+                                <p className="text-xs text-[#786848] line-clamp-1 mt-0.5">
+                                  {item.description}
+                                </p>
+                              )}
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs text-[#786848]">
+                                  Qty: <strong className="text-[#F8F8E8] font-mono">{item.quantity}</strong>
+                                </span>
+                                <span className="text-[#786848] text-xs">•</span>
+                                <span className="text-xs text-[#786848]">
+                                  ₹{item.price.toFixed(2)} each
+                                </span>
+                              </div>
+                            </div>
+                          </Link>
+
+                          <div className="text-right shrink-0">
+                            <span className="font-mono text-sm font-semibold text-[#F8F8E8] block">
+                              ₹{(item.price * item.quantity).toFixed(2)}
+                            </span>
+                            <Link
+                              to={`/product/${itemSlug}`}
+                              className="text-[11px] text-[#486838] hover:underline"
+                            >
+                              View Product →
+                            </Link>
                           </div>
                         </div>
-                        <span className="font-mono text-[#F8F8E8]">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
 
-                  {/* Bottom Cost Breakdown & Actions */}
-                  <div className="pt-4 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-4 text-xs text-[#786848]">
-                      <span>
-                        Subtotal: <strong className="text-[#F8F8E8]">${order.subtotal?.toFixed(2)}</strong>
-                      </span>
-                      <span>•</span>
-                      <span>
-                        Shipping: <strong className="text-[#F8F8E8]">${order.shippingFee?.toFixed(2)}</strong>
-                      </span>
-                    </div>
+                  {/* Detailed Pricing Breakup & Summary */}
+                  {(() => {
+                    const subtotal = order.subtotal || 0;
+                    // Standard retail breakdown: Base Price (items total before 5% tax), GST/Taxes, Shipping Fee, and Grand Total
+                    const basePrice = parseFloat((subtotal * 0.95).toFixed(2));
+                    const gstAmount = parseFloat((subtotal - basePrice).toFixed(2));
+                    const shippingFee = order.shippingFee || 0;
+                    const grandTotal = order.total || (subtotal + shippingFee);
 
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
-                        <span className="text-xs text-[#786848] block">Grand Total</span>
-                        <span className="text-base font-bold text-[#F8F8E8] font-mono">
-                          ${order.total?.toFixed(2)}
-                        </span>
+                    return (
+                      <div className="pt-4 border-t border-white/[0.06] space-y-3">
+                        {/* Price Breakdown Grid */}
+                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05] grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                          <div>
+                            <span className="text-[11px] text-[#786848] block">Base Price</span>
+                            <span className="font-mono text-xs text-[#F8F8E8] font-medium">
+                              ₹{basePrice.toFixed(2)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[11px] text-[#786848] block">GST & Taxes (5%)</span>
+                            <span className="font-mono text-xs text-[#F8F8E8] font-medium">
+                              ₹{gstAmount.toFixed(2)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[11px] text-[#786848] block">Shipping Fee</span>
+                            <span className="font-mono text-xs text-[#F8F8E8] font-medium">
+                              ₹{shippingFee.toFixed(2)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[11px] text-[#486838] block font-semibold">Grand Total</span>
+                            <span className="font-mono text-sm text-[#F8F8E8] font-bold">
+                              ₹{grandTotal.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Bottom Actions */}
+                        <div className="flex flex-wrap items-center justify-between gap-4 pt-1">
+                          <div className="flex items-center gap-2 text-xs text-[#786848]">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                            <span>Payment Status: <strong className="text-[#F8F8E8] capitalize">{order.paymentStatus || 'Paid'}</strong></span>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <Link
+                              to="/shop"
+                              className="px-4 py-2 rounded-xl text-xs font-semibold text-[#0A0A0A] bg-[#F8F8E8] hover:bg-white transition-all shadow-sm"
+                            >
+                              Order Again
+                            </Link>
+                          </div>
+                        </div>
                       </div>
-                      <Link
-                        to="/shop"
-                        className="px-4 py-2 rounded-xl text-xs font-medium text-[#F8F8E8] border border-white/[0.1] hover:bg-white/[0.06] transition-colors"
-                      >
-                        Buy Again
-                      </Link>
-                    </div>
-                  </div>
+                    );
+                  })()}
                 </div>
               ))}
             </StaggerReveal>

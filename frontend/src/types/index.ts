@@ -49,4 +49,53 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
+  role?: 'customer' | 'admin';
+}
+
+export interface AdminStats {
+  totalRevenue: number;
+  orderCount: number;
+  productCount: number;
+  userCount: number;
+  recentOrders: Array<{
+    id: string;
+    orderNumber: string;
+    customer: string;
+    total: number;
+    orderStatus: string;
+    createdAt: string;
+  }>;
+}
+
+export interface AdminOrder {
+  id: string;
+  orderNumber: string;
+  customer: { email: string; phone?: string; firstName: string; lastName: string };
+  shippingAddress: { address: string; city: string; state: string; zip: string };
+  items: Array<{
+    productId: string;
+    slug: string;
+    name: string;
+    price: number;
+    quantity: number;
+    image?: string;
+    description?: string;
+  }>;
+  subtotal: number;
+  shippingFee: number;
+  total: number;
+  deliveryMethod: string;
+  paymentStatus: string;
+  orderStatus: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'customer' | 'admin';
+  avatar?: string;
+  createdAt: string;
 }

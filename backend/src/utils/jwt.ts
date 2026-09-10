@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'nature_mades_super_secret_jwt_key_2026';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 export interface TokenPayload {
   userId: string;
@@ -10,8 +9,11 @@ export interface TokenPayload {
 }
 
 export function generateToken(payload: TokenPayload): string {
+  // Admin sessions expire in 24 hours; Patron/Customer sessions expire in 30 days
+  const expiresIn = payload.role === 'admin' ? '24h' : '30d';
+
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'],
+    expiresIn: expiresIn as jwt.SignOptions['expiresIn'],
   });
 }
 

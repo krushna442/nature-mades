@@ -42,9 +42,12 @@ export interface OrderHistoryItem {
   paymentStatus: string;
   items: Array<{
     productId: string;
+    slug?: string;
     name: string;
     price: number;
     quantity: number;
+    image?: string;
+    description?: string;
   }>;
 }
 
@@ -54,7 +57,7 @@ export async function submitOrder(payload: CreateOrderPayload): Promise<OrderCon
   } catch (error) {
     console.warn('[OrderService] Backend offline or error, providing local confirmation', error);
     const subtotal = payload.items.reduce((s, i) => s + i.product.price * i.quantity, 0);
-    const shippingFee = payload.deliveryMethod === 'Express' ? 12.99 : 5.99;
+    const shippingFee = payload.deliveryMethod === 'Express' ? 99 : 49;
     const year = new Date().getFullYear();
     const mockOrderNumber = `NM-${year}-${Math.floor(10000 + Math.random() * 90000)}`;
 

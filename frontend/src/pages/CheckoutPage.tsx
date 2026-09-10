@@ -1,17 +1,44 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import { submitOrder, type OrderConfirmation } from '../services/orderService';
 import { ScrollReveal } from '../components/motion/ScrollReveal';
 
 export function CheckoutPage() {
+  const navigate = useNavigate();
   const { items, clearCart } = useCartStore();
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const [shipping, setShipping] = useState(5.99);
+  const [shipping, setShipping] = useState(49);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderResult, setOrderResult] = useState<OrderConfirmation | null>(null);
+  const [countdown, setCountdown] = useState(5);
+
+  // Automatic redirect countdown to /shop on order confirmation
+  useEffect(() => {
+    if (!orderResult) return;
+
+    if (countdown <= 0) {
+      navigate('/shop');
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate('/shop');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [orderResult, countdown, navigate]);
 
   // Form State
+  const [paymentMethod, setPaymentMethod] = useState<'demo' | 'card' | 'upi' | 'cod'>('demo');
+  const [upiId, setUpiId] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -21,9 +48,9 @@ export function CheckoutPage() {
     city: '',
     state: '',
     zip: '',
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvv: '',
+    cardNumber: '4242 •••• •••• 4242',
+    cardExpiry: '12/28',
+    cardCvv: '888',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,15 +110,25 @@ export function CheckoutPage() {
               Order Reference: <span className="font-mono text-[#F8F8E8] font-medium">{orderResult.order.orderNumber}</span>
             </p>
             <p className="text-xs text-[#786848] mb-6">
-              Total Charged: ${orderResult.order.total.toFixed(2)} • {orderResult.order.itemsCount} items
+              Total Charged: ₹{orderResult.order.total.toFixed(2)} • {orderResult.order.itemsCount} items
             </p>
-            <Link
-              to="/shop"
-              className="inline-flex px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:brightness-110 shadow-lg shadow-[#486838]/25"
-              style={{ background: '#486838', color: '#F8F8E8' }}
-            >
-              Continue Shopping
-            </Link>
+            <div className="space-y-3">
+              <Link
+                to="/shop"
+                className="inline-flex px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:brightness-110 shadow-lg shadow-[#486838]/25"
+                style={{ background: '#486838', color: '#F8F8E8' }}
+              >
+                Continue Shopping Now
+              </Link>
+
+              <div className="flex items-center justify-center gap-2 text-xs text-[#786848]">
+                <div className="w-2 h-2 rounded-full bg-[#486838] animate-ping" />
+                <span>
+                  Redirecting to shop catalog in{' '}
+                  <strong className="text-[#F8F8E8] font-mono text-sm">{countdown}s</strong>...
+                </span>
+              </div>
+            </div>
           </div>
         </ScrollReveal>
       </div>
@@ -223,8 +260,8 @@ export function CheckoutPage() {
                   <h2 className="text-base font-semibold text-[#F8F8E8] mb-4">Delivery</h2>
                   <div className="space-y-3">
                     {[
-                      { label: 'Standard (5–7 days)', price: 5.99 },
-                      { label: 'Express (2–3 days)', price: 12.99 },
+                      { label: 'Standard (5–7 days)', price: 49 },
+                      { label: 'Express (2–3 days)', price: 99 },
                     ].map((opt) => (
                       <label
                         key={opt.price}
@@ -242,48 +279,130 @@ export function CheckoutPage() {
                           />
                           <span className="text-sm text-[#F8F8E8]">{opt.label}</span>
                         </div>
-                        <span className="text-sm text-[#786848] font-medium">${opt.price.toFixed(2)}</span>
+                        <span className="text-sm text-[#786848] font-medium">₹{opt.price.toFixed(2)}</span>
                       </label>
                     ))}
                   </div>
                 </div>
               </ScrollReveal>
 
-              {/* Payment */}
+              {/* Payment Section */}
               <ScrollReveal delay={0.15}>
                 <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(120, 104, 72, 0.2)' }}>
-                  <h2 className="text-base font-semibold text-[#F8F8E8] mb-4">Payment</h2>
-                  <div className="space-y-4">
-                    <input
-                      required
-                      placeholder="Card number"
-                      name="cardNumber"
-                      value={formData.cardNumber}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl text-sm text-[#F8F8E8] placeholder:text-[#786848] outline-none focus:ring-1 focus:ring-[#486838]"
-                      style={inputStyle}
-                    />
-                    <div className="grid grid-cols-2 gap-4">
-                      <input
-                        required
-                        placeholder="MM / YY"
-                        name="cardExpiry"
-                        value={formData.cardExpiry}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F8F8E8] placeholder:text-[#786848] outline-none focus:ring-1 focus:ring-[#486838]"
-                        style={inputStyle}
-                      />
-                      <input
-                        required
-                        placeholder="CVV"
-                        name="cardCvv"
-                        value={formData.cardCvv}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F8F8E8] placeholder:text-[#786848] outline-none focus:ring-1 focus:ring-[#486838]"
-                        style={inputStyle}
-                      />
-                    </div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-base font-semibold text-[#F8F8E8]">Payment Method</h2>
+                    <span className="text-[10px] uppercase font-mono px-2.5 py-0.5 rounded-full bg-[#486838]/20 text-[#486838] border border-[#486838]/40">
+                      Demo Mode Active
+                    </span>
                   </div>
+
+                  {/* Payment Method Selector */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
+                    {[
+                      { id: 'demo', label: '⚡ Demo Pay', desc: 'Instant Simulation' },
+                      { id: 'card', label: '💳 Card', desc: 'Credit / Debit' },
+                      { id: 'upi', label: '📱 UPI', desc: 'GPay / PhonePe' },
+                      { id: 'cod', label: '📦 COD', desc: 'Cash on Delivery' },
+                    ].map((method) => {
+                      const isSelected = paymentMethod === method.id;
+                      return (
+                        <button
+                          key={method.id}
+                          type="button"
+                          onClick={() => setPaymentMethod(method.id as any)}
+                          className={`p-3 rounded-xl text-left border transition-all ${
+                            isSelected
+                              ? 'bg-[#486838]/20 border-[#486838] text-[#F8F8E8] shadow-sm'
+                              : 'bg-white/[0.02] border-white/[0.08] text-[#786848] hover:border-white/[0.15] hover:text-[#F8F8E8]'
+                          }`}
+                        >
+                          <div className="text-xs font-semibold block">{method.label}</div>
+                          <div className="text-[10px] opacity-70 mt-0.5">{method.desc}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Dynamic Method Content */}
+                  {paymentMethod === 'demo' && (
+                    <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-emerald-300">
+                        <span>✓</span>
+                        <span>Sandbox / One-Click Demo Mode</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-200/80 leading-relaxed">
+                        No real charge will occur. Click <strong>&quot;Place Order&quot;</strong> to simulate an instant authorized transaction, inventory reservation, and order creation.
+                      </p>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'card' && (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-[11px] text-[#786848]">
+                        <span>Card Information (Pre-filled with Demo Card)</span>
+                        <span className="font-mono text-emerald-400">Test Ready</span>
+                      </div>
+                      <input
+                        required
+                        placeholder="Card number"
+                        name="cardNumber"
+                        value={formData.cardNumber}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F8F8E8] placeholder:text-[#786848] outline-none focus:ring-1 focus:ring-[#486838]"
+                        style={inputStyle}
+                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        <input
+                          required
+                          placeholder="MM / YY"
+                          name="cardExpiry"
+                          value={formData.cardExpiry}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 rounded-xl text-sm text-[#F8F8E8] placeholder:text-[#786848] outline-none focus:ring-1 focus:ring-[#486838]"
+                          style={inputStyle}
+                        />
+                        <input
+                          required
+                          placeholder="CVV"
+                          name="cardCvv"
+                          value={formData.cardCvv}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 rounded-xl text-sm text-[#F8F8E8] placeholder:text-[#786848] outline-none focus:ring-1 focus:ring-[#486838]"
+                          style={inputStyle}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'upi' && (
+                    <div className="space-y-3">
+                      <label className="block text-xs text-[#786848]">Virtual Payment Address / UPI ID</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. yourname@okhdfcbank or yourname@paytm"
+                        value={upiId}
+                        onChange={(e) => setUpiId(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl text-sm text-[#F8F8E8] placeholder:text-[#786848] outline-none focus:ring-1 focus:ring-[#486838]"
+                        style={inputStyle}
+                      />
+                      <div className="flex items-center gap-2 text-[11px] text-[#786848]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#486838]" />
+                        <span>Supports Google Pay, PhonePe, Paytm, BHIM & all major UPI apps (Demo mode accepts any ID).</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'cod' && (
+                    <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-amber-300">
+                        <span>📦</span>
+                        <span>Cash On Delivery Selected</span>
+                      </div>
+                      <p className="text-[11px] text-amber-200/80 leading-relaxed">
+                        Pay with cash or scan delivery agent QR code upon product delivery at your doorstep.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </ScrollReveal>
             </div>
@@ -299,7 +418,7 @@ export function CheckoutPage() {
                   {items.map((item) => (
                     <div key={item.product.id} className="flex justify-between text-sm">
                       <span className="text-[#786848] truncate max-w-[60%]">{item.product.name} × {item.quantity}</span>
-                      <span className="text-[#F8F8E8]">${(item.product.price * item.quantity).toFixed(2)}</span>
+                      <span className="text-[#F8F8E8]">₹{(item.product.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -307,17 +426,17 @@ export function CheckoutPage() {
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-[#786848]">Subtotal</span>
-                    <span className="text-[#F8F8E8] font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="text-[#F8F8E8] font-medium">₹{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-[#786848]">Shipping</span>
-                    <span className="text-[#F8F8E8] font-medium">${shipping.toFixed(2)}</span>
+                    <span className="text-[#F8F8E8] font-medium">₹{shipping.toFixed(2)}</span>
                   </div>
                 </div>
                 <div className="h-px bg-[#786848]/20 mb-4" />
                 <div className="flex justify-between mb-6">
                   <span className="font-medium text-[#F8F8E8]">Total</span>
-                  <span className="text-xl font-bold text-[#F8F8E8]">${(subtotal + shipping).toFixed(2)}</span>
+                  <span className="text-xl font-bold text-[#F8F8E8]">₹{(subtotal + shipping).toFixed(2)}</span>
                 </div>
                 <button
                   type="submit"
@@ -330,8 +449,14 @@ export function CheckoutPage() {
                       <div className="w-4 h-4 border-2 border-[#F8F8E8] border-t-transparent rounded-full animate-spin" />
                       <span>Processing Order...</span>
                     </>
+                  ) : paymentMethod === 'demo' ? (
+                    '⚡ Place Order (Demo Pay)'
+                  ) : paymentMethod === 'upi' ? (
+                    '📱 Pay with UPI (Demo)'
+                  ) : paymentMethod === 'cod' ? (
+                    '📦 Confirm Cash on Delivery'
                   ) : (
-                    'Place Order'
+                    '💳 Pay with Card (Demo)'
                   )}
                 </button>
               </div>

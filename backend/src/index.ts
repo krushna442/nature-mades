@@ -5,6 +5,7 @@ import express, { type Request, type Response, type NextFunction } from 'express
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import { connectDB } from './config/db.js';
 import routes from './routes/index.js';
 import { globalLimiter } from './middleware/rateLimiter.js';
@@ -16,6 +17,7 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 // Performance & Security Middlewares (Optimized for 1,000 concurrent users)
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(compression());
+app.use(cookieParser());
 app.use(
   cors({
     origin: [CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],

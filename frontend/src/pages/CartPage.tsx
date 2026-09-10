@@ -66,7 +66,7 @@ export function CartPage() {
                         {item.product.name}
                       </Link>
                       <p className="text-sm text-[#786848] mt-0.5">{item.product.category}</p>
-                      <p className="text-base font-semibold text-[#F8F8E8] mt-2">${item.product.price.toFixed(2)}</p>
+                      <p className="text-base font-semibold text-[#F8F8E8] mt-2">₹{item.product.price.toFixed(2)}</p>
 
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex items-center gap-0 border border-[#786848]/30 rounded-lg overflow-hidden">
@@ -121,7 +121,7 @@ export function CartPage() {
                 <div className="space-y-3 mb-5">
                   <div className="flex justify-between text-sm">
                     <span className="text-[#786848]">Subtotal</span>
-                    <span className="text-[#F8F8E8] font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="text-[#F8F8E8] font-medium">₹{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-[#786848]">Shipping</span>
@@ -131,7 +131,7 @@ export function CartPage() {
                 <div className="h-px bg-[#786848]/20 mb-5" />
                 <div className="flex justify-between mb-6">
                   <span className="font-medium text-[#F8F8E8]">Total</span>
-                  <span className="text-xl font-bold text-[#F8F8E8]">${subtotal.toFixed(2)}</span>
+                  <span className="text-xl font-bold text-[#F8F8E8]">₹{subtotal.toFixed(2)}</span>
                 </div>
                 <Link
                   to="/checkout"

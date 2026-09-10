@@ -1,6 +1,8 @@
 import type { MouseEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore';
+import { useWishlistStore } from '../../store/wishlistStore';
+import { useAuthStore } from '../../store/authStore';
 import { ProductImage } from './ProductImage';
 import type { Product } from '../../types';
 
@@ -14,6 +16,11 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem);
   const openCart = useCartStore((state) => state.openCart);
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
+
+  const isWishlisted = isInWishlist(product.id);
 
   const handleAddToCart = (e: MouseEvent) => {
     e.preventDefault();
@@ -21,9 +28,13 @@ export function ProductCard({ product }: ProductCardProps) {
     openCart();
   };
 
-  const handleWishlist = (e: MouseEvent) => {
+  const handleWishlist = async (e: MouseEvent) => {
     e.preventDefault();
-    // Wishlist logic placeholder
+    e.stopPropagation();
+    const res = await toggleWishlist(product, isAuthenticated);
+    if (res.requiresLogin) {
+      navigate('/account');
+    }
   };
 
   const mainImage = product.images?.[0] || '';
@@ -63,15 +74,25 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <button
             onClick={handleWishlist}
-            className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-[#F8F8E8] transition-transform hover:scale-110"
+            className={`absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-110 ${
+              isWishlisted
+                ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 shadow-[0_0_12px_rgba(244,63,94,0.4)]'
+                : 'text-[#F8F8E8] hover:text-rose-300'
+            }`}
             style={{
-              background: 'rgba(0,0,0,0.4)',
+              background: isWishlisted ? undefined : 'rgba(0,0,0,0.4)',
               backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255,255,255,0.15)'
+              border: isWishlisted ? undefined : '1px solid rgba(255,255,255,0.15)'
             }}
-            aria-label="Add to wishlist"
+            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            title={isWishlisted ? 'Saved in wishlist' : 'Save to wishlist'}
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg
+              className="h-4 w-4 transition-transform active:scale-90"
+              fill={isWishlisted ? 'currentColor' : 'none'}
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
@@ -94,9 +115,9 @@ export function ProductCard({ product }: ProductCardProps) {
           
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-semibold text-[#F8F8E8] font-mono">${product.price.toFixed(2)}</span>
+              <span className="text-lg font-semibold text-[#F8F8E8] font-mono">₹{product.price.toFixed(2)}</span>
               {product.compareAtPrice && (
-                <span className="text-xs text-[#786848] line-through font-mono">${product.compareAtPrice.toFixed(2)}</span>
+                <span className="text-xs text-[#786848] line-through font-mono">₹{product.compareAtPrice.toFixed(2)}</span>
               )}
             </div>
           </div>

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../types';
 import { fetchProductBySlug } from '../services/productService';
 import { useCartStore } from '../store/cartStore';
+import { useWishlistStore } from '../store/wishlistStore';
+import { useAuthStore } from '../store/authStore';
 import { ScrollReveal } from '../components/motion/ScrollReveal';
 
 export function ProductDetailPage() {
@@ -11,6 +13,9 @@ export function ProductDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.openCart);
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -72,7 +77,7 @@ export function ProductDetailPage() {
     { key: 'description', label: 'Description', content: product.description },
     ...(product.ingredients?.length ? [{ key: 'ingredients', label: 'Ingredients', content: product.ingredients.join(', ') }] : []),
     ...(product.materials?.length ? [{ key: 'materials', label: 'Materials', content: product.materials.join(', ') }] : []),
-    { key: 'shipping', label: 'Shipping & Returns', content: 'Free shipping on orders over $50. Standard delivery takes 5-7 business days. Returns accepted within 30 days of purchase.' },
+    { key: 'shipping', label: 'Shipping & Returns', content: 'Free shipping on orders over ₹499. Standard delivery takes 5-7 business days. Returns accepted within 30 days of purchase.' },
   ];
 
   return (
@@ -153,9 +158,9 @@ export function ProductDetailPage() {
 
               {/* Price */}
               <div className="flex items-center gap-3 mb-5">
-                <span className="text-2xl font-bold text-[#F8F8E8]">${product.price.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-[#F8F8E8]">₹{product.price.toFixed(2)}</span>
                 {product.compareAtPrice && (
-                  <span className="text-lg text-[#786848] line-through">${product.compareAtPrice.toFixed(2)}</span>
+                  <span className="text-lg text-[#786848] line-through">₹{product.compareAtPrice.toFixed(2)}</span>
                 )}
               </div>
 
@@ -204,10 +209,27 @@ export function ProductDetailPage() {
               <Link
                 to="/checkout"
                 onClick={() => { for (let i = 0; i < quantity; i++) addItem(product); }}
-                className="flex items-center justify-center w-full py-3.5 rounded-xl text-sm font-medium text-[#F8F8E8] border border-[#786848]/40 hover:bg-[#486838]/15 transition-all duration-200 hover:translate-y-[-1px]"
+                className="flex items-center justify-center w-full py-3.5 rounded-xl text-sm font-medium text-[#F8F8E8] border border-[#786848]/40 hover:bg-[#486838]/15 transition-all duration-200 hover:translate-y-[-1px] mb-3"
               >
                 Buy Now
               </Link>
+
+              {/* Wishlist Button */}
+              <button
+                type="button"
+                onClick={async () => {
+                  const res = await toggleWishlist(product, isAuthenticated);
+                  if (res.requiresLogin) navigate('/account');
+                }}
+                className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl text-xs font-semibold transition-all duration-200 border ${
+                  isInWishlist(product.id)
+                    ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                    : 'bg-white/[0.04] text-[#F8F8E8] border-white/[0.08] hover:bg-white/[0.08]'
+                }`}
+              >
+                <span>{isInWishlist(product.id) ? '❤️' : '🤍'}</span>
+                <span>{isInWishlist(product.id) ? 'Saved in Wishlist' : 'Add to Wishlist'}</span>
+              </button>
 
               <div className="h-px bg-[#786848]/20 my-6" />
 

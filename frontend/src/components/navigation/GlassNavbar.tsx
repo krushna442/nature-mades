@@ -3,11 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useCartStore } from '../../store/cartStore';
 import { useAuthStore } from '../../store/authStore';
+import { useWishlistStore } from '../../store/wishlistStore';
 
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
   { label: 'Crafts', href: '/crafts' },
+  { label: 'Wishlist', href: '/wishlist' },
   { label: 'Orders', href: '/orders' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
@@ -20,7 +22,15 @@ export function GlassNavbar() {
   const itemCount = useCartStore((s) => s.items.reduce((sum, item) => sum + item.quantity, 0));
   const openCart = useCartStore((s) => s.openCart);
   const { isAuthenticated, user, logout } = useAuthStore();
+  const wishlistCount = useWishlistStore((s) => s.wishlist.length);
+  const fetchWishlist = useWishlistStore((s) => s.fetchWishlist);
   const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchWishlist();
+    }
+  }, [isAuthenticated, fetchWishlist]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -91,10 +101,41 @@ export function GlassNavbar() {
                 </li>
               );
             })}
+            {isAuthenticated && user?.role === 'admin' && (
+              <li>
+                <Link
+                  to="/admin"
+                  className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                    location.pathname === '/admin'
+                      ? 'text-[#F8F8E8] bg-[#486838]/25 border border-[#486838]/40'
+                      : 'text-[#486838] hover:text-[#F8F8E8] hover:bg-white/[0.05]'
+                  }`}
+                >
+                  ⚡ Admin
+                </Link>
+              </li>
+            )}
           </ul>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
+            {/* Wishlist */}
+            <Link
+              to="/wishlist"
+              className="relative flex items-center justify-center w-10 h-10 rounded-xl text-[#786848] hover:text-rose-400 hover:bg-white/[0.05] transition-colors duration-200"
+              aria-label={`Wishlist, ${wishlistCount} items`}
+              title="View Wishlist"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill={wishlistCount > 0 ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={wishlistCount > 0 ? 'text-rose-400' : ''}>
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold rounded-full bg-rose-500 text-white min-w-[18px]">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
             {/* Cart */}
             <button
               onClick={openCart}
@@ -212,6 +253,20 @@ export function GlassNavbar() {
                     </li>
                   );
                 })}
+                {isAuthenticated && user?.role === 'admin' && (
+                  <li>
+                    <Link
+                      to="/admin"
+                      className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                        location.pathname === '/admin'
+                          ? 'text-[#F8F8E8] bg-white/[0.08]'
+                          : 'text-[#486838] hover:text-[#F8F8E8] hover:bg-white/[0.05]'
+                      }`}
+                    >
+                      ⚡ Admin
+                    </Link>
+                  </li>
+                )}
               </ul>
               <div className="mt-4 pt-4 border-t border-white/[0.08]">
                 {isAuthenticated ? (

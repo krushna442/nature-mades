@@ -33,6 +33,7 @@ export async function request<T = any>(
 
   try {
     const response = await fetch(url, {
+      credentials: 'include',
       ...options,
       headers,
     });

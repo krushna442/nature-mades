@@ -3,8 +3,8 @@ import type { User } from '../types';
 import {
   loginApi,
   registerApi,
+  logoutApi,
   googleLoginApi,
-  instagramLoginApi,
   fetchCurrentProfile,
   type LoginPayload,
   type RegisterPayload,
@@ -15,11 +15,11 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitialized: boolean;
   error: string | null;
   login: (payload: LoginPayload) => Promise<boolean>;
   register: (payload: RegisterPayload) => Promise<boolean>;
-  googleLogin: (credential: string) => Promise<boolean>;
-  instagramLogin: (codeOrUsername: { code?: string; username?: string }) => Promise<boolean>;
+  googleLogin: (credentialOrPayload: string | { credential?: string; email?: string; name?: string }) => Promise<boolean>;
   logout: () => void;
   initialize: () => Promise<void>;
   clearError: () => void;
@@ -29,22 +29,32 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: typeof window !== 'undefined' ? localStorage.getItem('nature-mades-token') : null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true,
+  isInitialized: false,
   error: null,
 
   clearError: () => set({ error: null }),
 
   initialize: async () => {
-    const token = localStorage.getItem('nature-mades-token');
-    if (!token) return;
-
     set({ isLoading: true });
     try {
       const { user } = await fetchCurrentProfile();
-      set({ user, token, isAuthenticated: true, isLoading: false, error: null });
+      set({
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+        isInitialized: true,
+        error: null,
+      });
     } catch {
       localStorage.removeItem('nature-mades-token');
-      set({ user: null, token: null, isAuthenticated: false, isLoading: false });
+      set({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+        isInitialized: true,
+      });
     }
   },
 
@@ -73,12 +83,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (payload) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await registerApi(payload);
-      localStorage.setItem('nature-mades-token', res.token);
+      await registerApi(payload);
       set({
-        user: res.user,
-        token: res.token,
-        isAuthenticated: true,
         isLoading: false,
         error: null,
       });
@@ -92,10 +98,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  googleLogin: async (credential) => {
+  googleLogin: async (credentialOrPayload) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await googleLoginApi({ credential });
+      const payload = typeof credentialOrPayload === 'string'
+        ? { credential: credentialOrPayload }
+        : credentialOrPayload;
+
+      const res = await googleLoginApi(payload);
       localStorage.setItem('nature-mades-token', res.token);
       set({
         user: res.user,
@@ -114,30 +124,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  instagramLogin: async (payload) => {
-    set({ isLoading: true, error: null });
-    try {
-      const res = await instagramLoginApi(payload);
-      localStorage.setItem('nature-mades-token', res.token);
-      set({
-        user: res.user,
-        token: res.token,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
-      return true;
-    } catch (err: any) {
-      set({
-        isLoading: false,
-        error: err.message || 'Instagram sign-in failed',
-      });
-      return false;
-    }
-  },
-
   logout: () => {
     localStorage.removeItem('nature-mades-token');
+    logoutApi().catch(() => {});
     set({ user: null, token: null, isAuthenticated: false, error: null });
   },
 }));

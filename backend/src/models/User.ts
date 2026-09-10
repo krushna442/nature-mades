@@ -23,6 +23,10 @@ export interface IUser extends Document {
   };
   addresses: IUserAddress[];
   savedProducts: mongoose.Types.ObjectId[];
+  resetPasswordOtp?: {
+    code: string;
+    expiresAt: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -72,6 +76,10 @@ const UserSchema = new Schema<IUser>(
     },
     addresses: [UserAddressSchema],
     savedProducts: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+    resetPasswordOtp: {
+      code: { type: String },
+      expiresAt: { type: Date },
+    },
   },
   {
     timestamps: true,
@@ -79,8 +87,6 @@ const UserSchema = new Schema<IUser>(
 );
 
 // Compound / secondary indexes for concurrent lookups
-UserSchema.index({ 'providers.google.id': 1 }, { sparse: true });
-UserSchema.index({ 'providers.instagram.id': 1 }, { sparse: true });
 
 export const User: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

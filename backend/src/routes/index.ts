@@ -5,6 +5,7 @@ import categoryRoutes from './category.routes.js';
 import craftRoutes from './craft.routes.js';
 import orderRoutes from './order.routes.js';
 import contactRoutes from './contact.routes.js';
+import adminRoutes from './admin.routes.js';
 import { isDbConnected } from '../config/db.js';
 
 const router = Router();
@@ -24,5 +25,6 @@ router.use('/categories', categoryRoutes);
 router.use('/crafts', craftRoutes);
 router.use('/orders', orderRoutes);
 router.use('/contact', contactRoutes);
+router.use('/admin', adminRoutes);
 
 export default router;

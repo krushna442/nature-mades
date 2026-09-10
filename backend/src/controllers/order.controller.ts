@@ -11,9 +11,6 @@ function generateOrderNumber(): string {
 }
 
 export async function createOrder(req: AuthRequest, res: Response): Promise<void> {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const {
       customer,
@@ -42,10 +39,9 @@ export async function createOrder(req: AuthRequest, res: Response): Promise<void
 
     // Validate inventory and prepare items with verified prices
     for (const item of items) {
-      const product = await Product.findById(item.productId || item.product?.id).session(session);
+      const product = await Product.findById(item.productId || item.product?.id);
 
       if (!product) {
-        await session.abortTransaction();
         res.status(404).json({ message: `Product not found for item: ${item.name || item.productId}` });
         return;
       }
@@ -53,7 +49,6 @@ export async function createOrder(req: AuthRequest, res: Response): Promise<void
       const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
 
       if (product.stock < quantity) {
-        await session.abortTransaction();
         res.status(400).json({
           message: `Insufficient stock for "${product.name}". Available: ${product.stock}, requested: ${quantity}`,
         });
@@ -62,7 +57,7 @@ export async function createOrder(req: AuthRequest, res: Response): Promise<void
 
       // Atomically decrement stock
       product.stock -= quantity;
-      await product.save({ session });
+      await product.save();
 
       orderItems.push({
         productId: product._id.toString(),
@@ -70,63 +65,55 @@ export async function createOrder(req: AuthRequest, res: Response): Promise<void
         name: product.name,
         price: product.price,
         quantity,
+        image: product.images?.[0] || '',
+        description: product.shortDescription || product.description || '',
       });
 
       calculatedSubtotal += product.price * quantity;
     }
 
-    const shippingFee = deliveryMethod === 'Express' ? 12.99 : 5.99;
+    const shippingFee = deliveryMethod === 'Express' ? 99 : 49;
     const total = parseFloat((calculatedSubtotal + shippingFee).toFixed(2));
     const orderNumber = generateOrderNumber();
 
-    const newOrder = await Order.create(
-      [
-        {
-          orderNumber,
-          userId: req.user?.userId || undefined,
-          customer: {
-            email: customer.email.toLowerCase().trim(),
-            phone: customer.phone,
-            firstName: customer.firstName.trim(),
-            lastName: customer.lastName.trim(),
-          },
-          shippingAddress: {
-            address: shippingAddress.address.trim(),
-            city: shippingAddress.city.trim(),
-            state: shippingAddress.state.trim(),
-            zip: shippingAddress.zip.trim(),
-          },
-          deliveryMethod,
-          shippingFee,
-          subtotal: parseFloat(calculatedSubtotal.toFixed(2)),
-          total,
-          items: orderItems,
-          paymentStatus: 'paid', // Simulated authorization for single-vendor handmade experience
-          orderStatus: 'processing',
-        },
-      ],
-      { session }
-    );
-
-    await session.commitTransaction();
+    const newOrder = await Order.create({
+      orderNumber,
+      userId: req.user?.userId || undefined,
+      customer: {
+        email: customer.email.toLowerCase().trim(),
+        phone: customer.phone,
+        firstName: customer.firstName.trim(),
+        lastName: customer.lastName.trim(),
+      },
+      shippingAddress: {
+        address: shippingAddress.address.trim(),
+        city: shippingAddress.city.trim(),
+        state: shippingAddress.state.trim(),
+        zip: shippingAddress.zip.trim(),
+      },
+      deliveryMethod,
+      shippingFee,
+      subtotal: parseFloat(calculatedSubtotal.toFixed(2)),
+      total,
+      items: orderItems,
+      paymentStatus: 'paid',
+      orderStatus: 'processing',
+    });
 
     res.status(201).json({
       message: 'Order placed successfully',
       order: {
-        orderNumber: newOrder[0].orderNumber,
-        total: newOrder[0].total,
-        subtotal: newOrder[0].subtotal,
-        shippingFee: newOrder[0].shippingFee,
-        itemsCount: newOrder[0].items.length,
-        createdAt: newOrder[0].createdAt,
+        orderNumber: newOrder.orderNumber,
+        total: newOrder.total,
+        subtotal: newOrder.subtotal,
+        shippingFee: newOrder.shippingFee,
+        itemsCount: newOrder.items.length,
+        createdAt: newOrder.createdAt,
       },
     });
   } catch (error) {
-    await session.abortTransaction();
     console.error('[CreateOrder Error]:', error);
     res.status(500).json({ message: 'Failed to place order' });
-  } finally {
-    session.endSession();
   }
 }
 
