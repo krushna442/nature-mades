@@ -1,46 +1,126 @@
-# ==============================
-# Dependencies
-# ==============================
-node_modules/
-**/node_modules/
+# ==============================================================================
+# NatureMades Comprehensive Security & Project .gitignore
+# Prevents accidental commit of secrets, credentials, environment configs,
+# private keys, database dumps, logs, dependencies, and temporary files.
+# ==============================================================================
 
-# ==============================
-# Build outputs
-# ==============================
-dist/
-**/dist/
-dist-ssr/
-**/dist-ssr/
-build/
-**/build/
-out/
-**/out/
-.next/
-.nuxt/
-.output/
-.turbo/
-.cache/
-.vite/
+# ------------------------------------------------------------------------------
+# 1. ENVIRONMENT VARIABLES & SECRETS (CRITICAL)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+*.env
+*.env.*
+*.local
+*.secret
+*.secrets
+secrets/
+**/secrets/
+credentials/
+**/credentials/
 
-# ==============================
-# TypeScript
-# ==============================
-*.tsbuildinfo
+# Safe template exceptions (allowed in Git)
+!.env.example
+!**/.env.example
+!.env.sample
+!**/.env.sample
+!.env.template
+!**/.env.template
 
-# ==============================
-# Test outputs
-# ==============================
-coverage/
-**/coverage/
-.nyc_output/
-test-results/
-playwright-report/
-blob-report/
+# ------------------------------------------------------------------------------
+# 2. API KEYS, CLOUD CREDENTIALS & SERVICE ACCOUNTS
+# ------------------------------------------------------------------------------
+*credential*.json
+*credentials*.json
+*client_secret*.json
+*service-account*.json
+*service_account*.json
+*firebase-adminsdk*.json
+*google-services*.json
+GoogleService-Info.plist
+token.json
+tokens.json
+*.token
+oauth*.json
+*.keypair
+*privatekey*
 
-# ==============================
-# Logs
-# ==============================
+# ------------------------------------------------------------------------------
+# 3. REGISTRY, SHELL & PACKAGE MANAGER AUTH TOKENS
+# ------------------------------------------------------------------------------
+.npmrc
+.yarnrc
+.yarnrc.yml
+.pypirc
+.netrc
+
+# ------------------------------------------------------------------------------
+# 4. PRIVATE KEYS, SSL CERTIFICATES & SSH KEYS
+# ------------------------------------------------------------------------------
+*.pem
+*.key
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+*.pub
+known_hosts
+authorized_keys
+
+# ------------------------------------------------------------------------------
+# 5. DATABASE DUMPS, LOCAL DATA & BACKUPS
+# ------------------------------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+*.rdb
+*.sql
+*.sql.gz
+*.dump
+*.bak
+*.backup
+data/
+**/data/
+dump/
+**/dump/
+dumps/
+**/dumps/
+mongo-dump/
+**/mongo-dump/
+
+# ------------------------------------------------------------------------------
+# 6. USER UPLOADS & RUNTIME STORAGE
+# ------------------------------------------------------------------------------
+uploads/
+**/uploads/
+storage/
+**/storage/
+media/
+**/media/
+attachments/
+**/attachments/
+tmp/
+**/tmp/
+temp/
+**/temp/
+pids/
+**/pids/
+*.pid
+*.pid.lock
+*.seed
+
+# ------------------------------------------------------------------------------
+# 7. LOGS & DEBUG FILES
+# ------------------------------------------------------------------------------
 logs/
+**/logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -48,37 +128,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# ==============================
-# Environment files and secrets
-# ==============================
-.env
-.env.*
-*.env
-*.local
-**/.env
-**/.env.*
-
-# Keep safe environment templates
-!.env.example
-!.env.sample
-!.env.template
-!**/.env.example
-!**/.env.sample
-!**/.env.template
-
-# ==============================
-# Runtime files
-# ==============================
-*.pid
-*.pid.lock
-*.seed
-pids/
-tmp/
-temp/
-
-# ==============================
-# Package-manager caches
-# ==============================
+# ------------------------------------------------------------------------------
+# 8. DEPENDENCIES & PACKAGE CACHES
+# ------------------------------------------------------------------------------
+node_modules/
+**/node_modules/
 .npm/
 .pnpm-store/
 .yarn/cache/
@@ -93,15 +147,45 @@ temp/
 !.yarn/sdks/
 !.yarn/versions/
 
-# ==============================
-# Editor files
-# ==============================
+# ------------------------------------------------------------------------------
+# 9. BUILD ARTIFACTS & CACHES
+# ------------------------------------------------------------------------------
+dist/
+**/dist/
+dist-ssr/
+**/dist-ssr/
+build/
+**/build/
+out/
+**/out/
+.next/
+.nuxt/
+.output/
+.turbo/
+.cache/
+.vite/
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# ------------------------------------------------------------------------------
+# 10. TEST & COVERAGE REPORTS
+# ------------------------------------------------------------------------------
+coverage/
+**/coverage/
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/
+
+# ------------------------------------------------------------------------------
+# 11. IDE & EDITOR SETTINGS
+# ------------------------------------------------------------------------------
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
-
 .idea/
 *.suo
 *.ntvs*
@@ -109,10 +193,12 @@ temp/
 *.sln
 *.sw?
 *~
+*.sublime-*
+.fleet/
 
-# ==============================
-# Operating-system files
-# ==============================
+# ------------------------------------------------------------------------------
+# 12. OPERATING SYSTEM ARTIFACTS
+# ------------------------------------------------------------------------------
 .DS_Store
 .DS_Store?
 ._*
@@ -122,26 +208,8 @@ Thumbs.db
 Desktop.ini
 ehthumbs.db
 
-# ==============================
-# Local databases and data
-# ==============================
-*.sqlite
-*.sqlite3
-*.db
-data/
-uploads/
-
-# ==============================
-# Docker overrides
-# ==============================
+# ------------------------------------------------------------------------------
+# 13. DOCKER OVERRIDES
+# ------------------------------------------------------------------------------
 docker-compose.override.yml
 compose.override.yml
-
-# ==============================
-# Miscellaneous
-# ==============================
-.eslintcache
-.stylelintcache
-*.pem
-*.key
-*.crt

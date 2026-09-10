@@ -1,75 +1,78 @@
-# React + TypeScript + Vite
+# NatureMades
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Full-stack e-commerce platform for handcrafted, nature-inspired products. Built with React, Vite, TypeScript, Tailwind CSS, Express, and MongoDB.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
 
 ```
+nature-mades/
+├── frontend/             # Vite + React + TypeScript + Tailwind frontend application
+│   ├── src/              # Components, pages, hooks, services, styles
+│   ├── public/           # Static assets, icons, logos
+│   ├── index.html        # HTML entry point
+│   ├── package.json      # Frontend dependencies & scripts
+│   ├── vite.config.ts    # Vite configuration & backend proxy
+│   └── tsconfig.json     # Frontend TypeScript configuration
+│
+├── backend/              # Node.js + Express + TypeScript + MongoDB API server
+│   ├── src/              # Controllers, models, routes, middleware, db seed
+│   ├── .env.example      # Environment variables template
+│   ├── package.json      # Backend dependencies & scripts
+│   └── tsconfig.json     # Backend TypeScript configuration
+│
+├── package.json          # Root scripts to orchestrate frontend & backend
+└── README.md
+```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. Install Dependencies
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+From the project root:
+```bash
+npm run install:all
+```
 
+Or install individually:
+```bash
+cd frontend && npm install
+cd ../backend && npm install
+```
+
+### 2. Environment Setup
+
+Configure environment variables for the backend:
+```bash
+cd backend
+cp .env.example .env
+```
+Ensure your `MONGODB_URI` and `JWT_SECRET` are configured in `backend/.env`.
+
+### 3. Run Development Servers
+
+Run both frontend and backend concurrently from the root:
+```bash
+npm run dev
+```
+
+Or run them individually:
+- **Frontend only**: `npm run dev:frontend` (or `cd frontend && npm run dev`) -> runs on `http://localhost:5173`
+- **Backend only**: `npm run dev:backend` (or `cd backend && npm run dev`) -> runs on `http://localhost:5000`
+
+### 4. Build for Production
+
+Build both frontend and backend:
+```bash
+npm run build
+```
+
+Or individually:
+- `npm run build:frontend`
+- `npm run build:backend`
+
+### 5. Seed Database
+
+To seed initial categories and products into MongoDB:
+```bash
+npm run seed
 ```
